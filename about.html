@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Perfectly Rooted Solutions</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      align-items: center;
+      margin-bottom: 4rem;
+    }
+
+    .about-image {
+      width: 100%;
+      height: 300px;
+      background: var(--gradient-accent);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: var(--primary-color);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .about-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-color);
+    }
+
+    .about-text p {
+      margin-bottom: 1.5rem;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .value-card {
+      text-align: center;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .value-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .value-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .value-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .value-card p {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .team-section {
+      background: var(--light-gray);
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      margin: 3rem 0;
+    }
+
+    .mission-section {
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mission-section::before {
+      content: '🎯';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 8rem;
+      opacity: 0.1;
+      transform: rotate(15deg);
+    }
+
+    .mission-section h2 {
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .mission-section h2::after {
+      background: var(--accent-color);
+    }
+
+    .mission-section p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+      line-height: 1.7;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="logo.png" alt="Perfectly Rooted Solutions Logo">
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="about.html" class="active">🌱 About</a>
+        <a href="services.html">⚙️ Services</a>
+        <a href="packages.html">📦 Packages</a>
+        <a href="contact.html">📞 Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-content fade-in-up">
+      <h1>🌱 About Perfectly Rooted Solutions</h1>
+      <p>Discover how we help businesses grow from the ground up with strategic guidance and innovative solutions</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="about-content scroll-animate">
+      <div class="about-image">
+        <i class="fas fa-seedling"></i>
+      </div>
+      <div class="about-text">
+        <p>🌟 At Perfectly Rooted Solutions, our mission is to empower entrepreneurs and organizations to grow from the ground up with clarity, confidence, and strategic guidance. We provide holistic, results-driven solutions rooted in integrity, innovation, and impactful execution.</p>
+        <p>🚀 Our approach combines deep industry expertise with personalized strategies that align with your unique vision and goals, ensuring sustainable growth and long-term success. We believe that every business has the potential to flourish when given the right foundation and strategic direction.</p>
+        <p>💡 Founded on the principle that success comes from being "perfectly rooted" in purpose, we help businesses establish strong foundations while maintaining the flexibility to adapt and grow in an ever-changing marketplace.</p>
+      </div>
+    </div>
+
+    <div class="mission-section scroll-animate">
+      <h2>🎯 Our Mission</h2>
+      <p>To empower entrepreneurs and organizations by providing strategic guidance that aligns purpose with performance, creating sustainable growth and meaningful impact in their communities and industries.</p>
+    </div>
+
+    <div class="section scroll-animate">
+      <div class="section-header">
+        <h2>💎 Our Core Values</h2>
+        <p>The principles that guide everything we do</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <span class="value-icon">🌿</span>
+          <h3>Integrity</h3>
+          <p>We operate with complete transparency and honesty, building trust through consistent actions and ethical business practices.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">💡</span>
+          <h3>Innovation</h3>
+          <p>We embrace creative solutions and cutting-edge strategies to help our clients stay ahead in competitive markets.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">🎯</span>
+          <h3>Impact</h3>
+          <p>We focus on delivering measurable results that create lasting positive change for businesses and their communities.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">🤝</span>
+          <h3>Partnership</h3>
+          <p>We build long-term relationships with our clients, serving as trusted advisors throughout their growth journey.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">🌱</span>
+          <h3>Growth</h3>
+          <p>We are committed to continuous learning and improvement, both for ourselves and the businesses we serve.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-icon">⚡</span>
+          <h3>Excellence</h3>
+          <p>We maintain the highest standards in everything we do, delivering quality solutions that exceed expectations.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="team-section scroll-animate">
+      <div class="section-header">
+        <h2>👥 Our Approach</h2>
+        <p>How we work with you to achieve success</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>🔍 Deep Discovery</h3>
+          <p>We start by understanding your unique challenges, goals, and market position to develop tailored strategies that fit your specific needs.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3>💡 Strategic Planning</h3>
+          <p>Our team develops comprehensive strategies that align with your vision while addressing practical implementation challenges.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3>🚀 Guided Implementation</h3>
+          <p>We provide hands-on support during execution, ensuring strategies are implemented effectively and adjusted as needed.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>📈 Continuous Optimization</h3>
+          <p>We monitor progress and continuously refine approaches to maximize results and adapt to changing market conditions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-section scroll-animate">
+      <h2>🌟 Ready to Get Started?</h2>
+      <p>Let's discuss how we can help your business grow from the ground up with strategic guidance tailored to your unique needs.</p>
+      <div style="margin-top: 2rem;">
+        <a href="contact.html" class="btn btn-secondary">
+          <i class="fas fa-comments"></i>
+          Start the Conversation
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-section">
+          <h4>📞 Contact Information</h4>
+          <p>Phone: 800.893.0006</p>
+          <p>Email: info@perfectly-rooted.com</p>
+        </div>
+        <div class="footer-section">
+          <h4>📍 Location</h4>
+          <p>Greenville, SC</p>
+        </div>
+        <div class="footer-section">
+          <h4>⚖️ Legal</h4>
+          <a href="/terms.html">Terms & Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
+

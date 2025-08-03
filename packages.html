@@ -1,168 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Perfectly Rooted Solutions | Service Packages</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packages - Perfectly Rooted Solutions</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="shared-styles.css">
   <style>
-    body {
-      font-family: 'Playfair Display', serif;
-      background-color: #fafafa;
-      color: #1b4332;
-      margin: 0;
-      padding: 2rem;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #002147;
-    }
-    .package {
-      max-width: 800px;
-      margin: 2rem auto;
-      background: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .package h2 {
-      margin-bottom: 0.5rem;
-    }
-    .package ul {
-      list-style-type: square;
-      padding-left: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .price {
-      font-weight: bold;
-      color: #14532d;
-      font-size: 1.2rem;
-    }
-    .cta {
-      display: block;
-      margin-top: 1rem;
-      text-align: center;
-    }
-    .cta a {
-      background-color: #1b4332;
-      color: white;
-      padding: 0.7rem 1.5rem;
-      border-radius: 30px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-    .cta a:hover {
-      background-color: #14532d;
-      transform: scale(1.05);
-    }
-    .bonus {
-      text-align: center;
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
       margin-top: 3rem;
     }
-    .nav {
+
+    .package-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .package-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+    }
+
+    .package-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .package-card.featured {
+      border: 2px solid var(--accent-color);
+      transform: scale(1.02);
+    }
+
+    .package-card.featured::before {
+      background: var(--gradient-accent);
+    }
+
+    .package-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--gradient-accent);
+      color: var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .package-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .package-header {
       margin-bottom: 2rem;
     }
-    .nav a {
-      font-weight: bold;
-      text-decoration: none;
-      color: #002147;
-    }
-    .faq {
-      max-width: 800px;
-      margin: 3rem auto;
-      background: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .faq h2 {
-      text-align: center;
-      color: #002147;
-    }
-    .faq-item {
-      margin-bottom: 1.5rem;
-    }
-    .faq-item h3 {
+
+    .package-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
       margin-bottom: 0.5rem;
-      color: #1b4332;
+    }
+
+    .package-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--secondary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .package-period {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .package-description {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .package-features {
+      list-style: none;
+      margin: 2rem 0;
+      text-align: left;
+      flex-grow: 1;
+    }
+
+    .package-features li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .package-features li::before {
+      content: '✅';
+      font-size: 1rem;
+    }
+
+    .package-button {
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    .package-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .featured .package-button {
+      background: var(--gradient-accent);
+      color: var(--primary-color);
+    }
+
+    .comparison-section {
+      background: var(--light-gray);
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      margin: 4rem 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-top: 2rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-table th {
+      background: var(--gradient-primary);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .check-mark {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+    }
+
+    .faq-section {
+      margin: 4rem 0;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 1.5rem;
+      background: var(--gradient-accent);
+      color: var(--primary-color);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-answer {
+      padding: 1.5rem;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-table {
+        font-size: 0.9rem;
+      }
+      
+      .comparison-table th,
+      .comparison-table td {
+        padding: 0.75rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <a href="index.html">← Back to Home</a>
-  </div>
-
-  <h1>Perfectly Rooted Solutions<br>Service Menu</h1>
-
-  <div class="package">
-    <h2>🏁 Rooted Foundations Package</h2>
-    <p><em>Best for new entrepreneurs ready to legally launch their business</em></p>
-    <ul>
-      <li>LLC Formation (Articles of Organization filed)</li>
-      <li>EIN Registration (IRS Business Tax ID)</li>
-      <li>Operating Agreement Template</li>
-      <li>1 Business Strategy Coaching Call (60 minutes)</li>
-    </ul>
-    <p class="price">Launch Price: $750</p>
-    <div class="cta"><a href="https://buy.stripe.com/aEU6oM8Mx1IhdKU4gg" target="_blank">Launch Rooted Foundations</a></div>
-  </div>
-
-  <div class="package">
-    <h2>📈 Strategic Growth Package</h2>
-    <p><em>Best for entrepreneurs wanting setup + business planning</em></p>
-    <ul>
-      <li>LLC or S-Corp Formation</li>
-      <li>EIN Registration</li>
-      <li>Operating Agreement</li>
-      <li>Customized Business Plan (Ready for banks, grants, and investors)</li>
-      <li>2 Business Strategy Coaching Calls (60 minutes each)</li>
-    </ul>
-    <p class="price">Launch Price: $1,200</p>
-    <div class="cta"><a href="https://buy.stripe.com/eVa9AY1k5aeN8qA145" target="_blank">Launch Strategic Growth</a></div>
-  </div>
-
-  <div class="package">
-    <h2>🏛️ Legacy Builder Package</h2>
-    <p><em>Best for entrepreneurs serious about structure, funding, and scaling</em></p>
-    <ul>
-      <li>LLC or S-Corp or Nonprofit Formation</li>
-      <li>EIN Registration</li>
-      <li>Custom Operating Agreement</li>
-      <li>Customized Business Plan</li>
-      <li>Capital Readiness Coaching (Grant, Credit, Loan Preparation)</li>
-      <li>Full CRM + Process Consulting Session</li>
-      <li>4 Business Strategy Coaching Sessions (1 hour each)</li>
-    </ul>
-    <p class="price">Launch Price: $2,000</p>
-    <div class="cta"><a href="https://buy.stripe.com/cN2dRe5Al72BeOYfZ0" target="_blank">Launch Legacy Builder</a></div>
-  </div>
-
-  <div class="bonus">
-    <h2>✨ Bonus Add-Ons</h2>
-    <p>Additional Coaching Sessions: <strong>$150/hour</strong><br>
-    Business Plan Only (No Setup): <strong>$750</strong></p>
-  </div>
-
-  <div class="faq">
-    <h2>📌 Frequently Asked Questions</h2>
-
-    <div class="faq-item">
-      <h3>How long does setup take?</h3>
-      <p>Typically 3-5 business days for LLC or EIN setup. Business plans and coaching calls are scheduled within 1 week of purchase.</p>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="logo.png" alt="Perfectly Rooted Solutions Logo">
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="about.html">🌱 About</a>
+        <a href="services.html">⚙️ Services</a>
+        <a href="packages.html" class="active">📦 Packages</a>
+        <a href="contact.html">📞 Contact</a>
+      </nav>
     </div>
+  </header>
 
-    <div class="faq-item">
-      <h3>Can I upgrade my package later?</h3>
-      <p>Yes! If you start with a smaller package, you can apply your payment toward an upgrade within 30 days.</p>
-    </div>
-
-    <div class="faq-item">
-      <h3>Do you offer payment plans?</h3>
-      <p>We do! Payment plans are available through our checkout provider. Just click your preferred package to view installment options.</p>
+  <div class="page-header">
+    <div class="page-header-content fade-in-up">
+      <h1>📦 Our Packages</h1>
+      <p>Choose the perfect package for your business growth journey and unlock your full potential</p>
     </div>
   </div>
+
+  <div class="main-content">
+    <div class="section scroll-animate">
+      <div class="section-header">
+        <h2>🚀 Investment Options</h2>
+        <p>Comprehensive packages designed to meet businesses at every stage of growth</p>
+      </div>
+      <div class="packages-grid">
+        <div class="package-card">
+          <span class="package-icon">🌱</span>
+          <div class="package-header">
+            <div class="package-title">Starter Package</div>
+            <div class="package-price">$497</div>
+            <div class="package-period">One-time consultation</div>
+          </div>
+          <div class="package-description">
+            Perfect for new entrepreneurs and small businesses looking to establish a solid foundation and strategic direction.
+          </div>
+          <ul class="package-features">
+            <li>Initial business assessment and analysis</li>
+            <li>Strategic planning session (2 hours)</li>
+            <li>Basic business structure guidance</li>
+            <li>Resource planning overview</li>
+            <li>Follow-up email support (30 days)</li>
+            <li>Action plan with next steps</li>
+          </ul>
+          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+            <i class="fas fa-rocket"></i>
+            Get Started
+          </a>
+        </div>
+
+        <div class="package-card featured">
+          <div class="package-badge">⭐ Most Popular</div>
+          <span class="package-icon">🌿</span>
+          <div class="package-header">
+            <div class="package-title">Growth Package</div>
+            <div class="package-price">$1,497</div>
+            <div class="package-period">3-month engagement</div>
+          </div>
+          <div class="package-description">
+            Ideal for established businesses ready to scale operations and implement comprehensive growth strategies.
+          </div>
+          <ul class="package-features">
+            <li>Comprehensive business strategy development</li>
+            <li>Complete structure setup assistance</li>
+            <li>Capital readiness preparation</li>
+            <li>Process improvement analysis</li>
+            <li>Monthly strategy sessions (3 sessions)</li>
+            <li>Ongoing email & phone support</li>
+            <li>Quarterly progress reviews</li>
+            <li>Custom resource library access</li>
+          </ul>
+          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+            <i class="fas fa-star"></i>
+            Most Popular Choice
+          </a>
+        </div>
+
+        <div class="package-card">
+          <span class="package-icon">👥</span>
+          <div class="package-header">
+            <div class="package-title">VA Onboarding Package</div>
+            <div class="package-price">$1,500</div>
+            <div class="package-period">One-time service</div>
+          </div>
+          <div class="package-description">
+            Complete virtual assistant sourcing and onboarding solution to help you find, hire, and integrate the perfect VA for your business needs.
+          </div>
+          <ul class="package-features">
+            <li>Discovery call to assess business needs</li>
+            <li>Complete sourcing and screening process</li>
+            <li>Job posting and application management</li>
+            <li>Professional interviews and English verification</li>
+            <li>Contract documentation (NDA, agreements, W-8BEN)</li>
+            <li>Onboarding and orientation preparation</li>
+            <li>Technical setup assistance (email, systems)</li>
+            <li>Optional SOP support and documentation</li>
+          </ul>
+          <a href="contact.html" class="package-button">
+            <i class="fas fa-user-plus"></i>
+            Get Started with VA Onboarding
+          </a>
+        </div>
+
+        <div class="package-card">
+          <span class="package-icon">🌳</span>
+          <div class="package-header">
+            <div class="package-title">Enterprise Package</div>
+            <div class="package-price">$2,997</div>
+            <div class="package-period">6-month partnership</div>
+          </div>
+          <div class="package-description">
+            Comprehensive transformation for businesses ready for significant growth and market expansion.
+          </div>
+          <ul class="package-features">
+            <li>Full business transformation strategy</li>
+            <li>Advanced strategic planning & execution</li>
+            <li>Complete operational overhaul</li>
+            <li>Investment readiness preparation</li>
+            <li>Weekly strategy sessions (24 sessions)</li>
+            <li>Priority support & guidance</li>
+            <li>Custom solution development</li>
+            <li>Team training and development</li>
+            <li>Market expansion planning</li>
+            <li>Ongoing advisory relationship</li>
+          </ul>
+          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+            <i class="fas fa-crown"></i>
+            Premium Choice
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="comparison-section scroll-animate">
+      <div class="section-header">
+        <h2>📊 Package Comparison</h2>
+        <p>Compare features across all packages to find the best fit for your needs</p>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Features</th>
+              <th>🌱 Starter</th>
+              <th>🌿 Growth</th>
+              <th>🌳 Enterprise</th>
+              <th>👥 VA Onboarding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Initial Business Assessment</td>
+              <td><span class="check-mark">✅</span></td>
+              <td><span class="check-mark">✅</span></td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+            <tr>
+              <td>Strategic Planning Sessions</td>
+              <td>1 session (2 hours)</td>
+              <td>3 sessions</td>
+              <td>24 sessions</td>
+            </tr>
+            <tr>
+              <td>Business Structure Setup</td>
+              <td>Basic guidance</td>
+              <td><span class="check-mark">✅</span></td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+            <tr>
+              <td>Process Improvement</td>
+              <td>Overview only</td>
+              <td><span class="check-mark">✅</span></td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+            <tr>
+              <td>Capital Readiness</td>
+              <td>-</td>
+              <td><span class="check-mark">✅</span></td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+            <tr>
+              <td>Team Training</td>
+              <td>-</td>
+              <td>-</td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+            <tr>
+              <td>Ongoing Support</td>
+              <td>30 days email</td>
+              <td>3 months</td>
+              <td>6 months + advisory</td>
+            </tr>
+            <tr>
+              <td>Custom Solutions</td>
+              <td>-</td>
+              <td>Limited</td>
+              <td><span class="check-mark">✅</span></td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>VA Onboarding</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td><span class="check-mark">✅</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="faq-section scroll-animate">
+      <div class="section-header">
+        <h2>❓ Frequently Asked Questions</h2>
+        <p>Get answers to common questions about our packages and services</p>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>💰 What payment options are available?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          We accept various payment methods including credit cards, bank transfers, and payment plans. For larger packages, we offer flexible payment schedules to accommodate your cash flow needs.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>⏰ How quickly can we get started?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Most engagements can begin within 1-2 weeks of package selection and contract signing. We'll schedule an initial discovery session to kick off your project immediately.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>🔄 Can I upgrade my package later?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Absolutely! You can upgrade to a higher-tier package at any time. We'll credit your previous investment toward the new package and adjust the timeline accordingly.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>📞 What kind of support is included?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Support varies by package but includes email support, scheduled calls, and access to our team. Higher-tier packages include priority support and more frequent touchpoints.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>📈 What results can I expect?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          While results vary by business and industry, our clients typically see improved operational efficiency, clearer strategic direction, and measurable growth within the first 90 days of engagement.
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-section scroll-animate">
+      <h2>🌟 Ready to Choose Your Package?</h2>
+      <p>Not sure which package is right for you? Schedule a complimentary consultation to discuss your specific needs and get personalized recommendations.</p>
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://form.jotform.com/251166993980066" target="_blank" class="btn btn-secondary">
+          <i class="fas fa-calendar-alt"></i>
+          Free Consultation
+        </a>
+        <a href="contact.html" class="btn btn-primary">
+          <i class="fas fa-comments"></i>
+          Ask Questions
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-section">
+          <h4>📞 Contact Information</h4>
+          <p>Phone: 800.893.0006</p>
+          <p>Email: info@perfectly-rooted.com</p>
+        </div>
+        <div class="footer-section">
+          <h4>📍 Location</h4>
+          <p>Greenville, SC</p>
+        </div>
+        <div class="footer-section">
+          <h4>⚖️ Legal</h4>
+          <a href="/terms.html">Terms & Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
+
