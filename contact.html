@@ -3,7 +3,572 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - Perfectly Rooted Solutions</title><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact - Perfectly Rooted Solutions</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .contact-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    .contact-form {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-form h3 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: var(--white);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(163, 177, 138, 0.1);
+    }
+
+    .submit-button {
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      font-size: 1rem;
+      font-family: 'Playfair Display', serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .info-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .info-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--gradient-accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .info-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .info-card p {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .schedule-section {
+      background: var(--gradient-accent);
+      padding: 3rem;
+      border-radius: 16px;
+      text-align: center;
+      color: var(--primary-color);
+      margin-top: 2rem;
+    }
+
+    .schedule-section h3 {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .schedule-button {
+      background: var(--primary-color);
+      color: var(--white);
+      padding: 1rem 2rem;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      margin-top: 1rem;
+    }
+
+    .schedule-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .office-hours {
+      background: var(--light-gray);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 3rem 0;
+    }
+
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .hours-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hours-item:last-child {
+      border-bottom: none;
+    }
+
+    .day {
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    .time {
+      color: var(--text-light);
+    }
+
+    .map-section {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .map-placeholder {
+      width: 100%;
+      height: 300px;
+      background: var(--gradient-accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-size: 3rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="logo.png" alt="Perfectly Rooted Solutions Logo">
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="about.html">🌱 About</a>
+        <a href="services.html">⚙️ Services</a>
+        <a href="packages.html">📦 Packages</a>
+        <a href="contact.html" class="active">📞 Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-content fade-in-up">
+      <h1>📞 Get In Touch</h1>
+      <p>Ready to take your business to the next level? Let's start the conversation and explore how we can help you succeed</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="contact-content scroll-animate">
+      <div class="contact-form">
+        <h3><i class="fas fa-envelope"></i> Send Us a Message</h3>
+        <form id="contactForm" onsubmit="submitContactForm(event)">
+          <div class="form-group">
+            <label for="name">👤 Your Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">📧 Your Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="company">🏢 Company Name (Optional)</label>
+            <input type="text" id="company" name="company">
+          </div>
+          <div class="form-group">
+            <label for="interest">🎯 Area of Interest</label>
+            <select id="interest" name="interest" required>
+              <option value="">Select an option...</option>
+              <option value="business-strategy">📈 Business Strategy Consulting</option>
+              <option value="business-structure">🏢 Business Structure Setup</option>
+              <option value="capital-readiness">💰 Capital Readiness & Resource Planning</option>
+              <option value="process-improvement">⚙️ Process Improvement</option>
+              <option value="va-onboarding">👥 VA Onboarding Services</option>
+              <option value="custom-consulting">🧩 Custom Consulting Packages</option>
+              <option value="general-inquiry">❓ General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">💬 Your Message</label>
+            <textarea id="message" name="message" rows="5" required placeholder="Tell us about your business goals and how we can help..."></textarea>
+          </div>
+          <button type="submit" class="submit-button">
+            <i class="fas fa-paper-plane"></i>
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <h3>📞 Phone</h3>
+          <p><strong>800.893.0006</strong></p>
+          <p>Call us during business hours for immediate assistance</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h3>📧 Email</h3>
+          <p><strong>info@perfectly-rooted.com</strong></p>
+          <p>Send us an email and we'll respond within 24 hours</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <h3>📍 Location</h3>
+          <p><strong>Greenville, SC</strong></p>
+        </div>
+
+        <div class="schedule-section">
+          <h3><i class="fas fa-calendar-check"></i> Schedule Your Complimentary Consultation</h3>
+          <p>Book a free 30-minute consultation to discuss your business goals and explore how we can help you achieve them.</p>
+          <button onclick="openConsultationForm()" class="schedule-button">
+            <i class="fas fa-calendar-alt"></i>
+            Schedule Now
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="office-hours scroll-animate">
+      <div class="section-header">
+        <h2>🕒 Office Hours</h2>
+        <p>When you can reach us for immediate assistance</p>
+      </div>
+      <div class="hours-grid">
+        <div class="hours-item">
+          <span class="day">Monday</span>
+          <span class="time">9:00 AM - 6:00 PM</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Tuesday</span>
+          <span class="time">9:00 AM - 6:00 PM</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Wednesday</span>
+          <span class="time">9:00 AM - 6:00 PM</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Thursday</span>
+          <span class="time">9:00 AM - 6:00 PM</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Friday</span>
+          <span class="time">9:00 AM - 5:00 PM</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Saturday</span>
+          <span class="time">By Appointment</span>
+        </div>
+        <div class="hours-item">
+          <span class="day">Sunday</span>
+          <span class="time">Closed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-section scroll-animate">
+      <h3>🗺️ Find Us</h3>
+      <p>Located in the heart of Greenville, South Carolina</p>
+      <div class="map-placeholder">
+        <i class="fas fa-map-marked-alt"></i>
+      </div>
+      <p style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">
+        Interactive map integration available upon request
+      </p>
+    </div>
+
+    <div class="highlight-section scroll-animate">
+      <h2>🚀 Ready to Transform Your Business?</h2>
+      <p>Don't wait to start your growth journey. Whether you have questions about our services or are ready to get started, we're here to help you succeed.</p>
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <button onclick="openConsultationForm()" class="btn btn-secondary">
+          <i class="fas fa-calendar-alt"></i>
+          Book Free Consultation
+        </button>
+        <a href="packages.html" class="btn btn-primary">
+          <i class="fas fa-box"></i>
+          View Our Packages
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-section">
+          <h4>📞 Contact Information</h4>
+          <p>Phone: 800.893.0006</p>
+          <p>Email: info@perfectly-rooted.com</p>
+        </div>
+        <div class="footer-section">
+          <h4>📍 Location</h4>
+          <p>Greenville, SC</p>
+        </div>
+        <div class="footer-section">
+          <h4>⚖️ Legal</h4>
+          <a href="/terms.html">Terms & Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Contact form submission
+    async function submitContactForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const button = form.querySelector('button[type="submit"]');
+      const originalText = button.innerHTML;
+      
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      button.disabled = true;
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            company: formData.get('company'),
+            interest: formData.get('interest'),
+            message: formData.get('message'),
+            form_type: 'contact'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! Your message has been sent successfully. We will respond within 24 hours.');
+          form.reset();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error sending your message. Please try again or contact us directly.');
+      } finally {
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }
+    }
+
+    // Consultation form functionality
+    function openConsultationForm() {
+      const formHtml = `
+        <div id="consultationModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin: 0; color: var(--primary-color);">📅 Book Your Free Consultation</h3>
+              <button onclick="closeConsultationForm()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <form id="consultationForm" onsubmit="submitConsultationForm(event)">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Phone</label>
+                <input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Business Name</label>
+                <input type="text" name="business" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">What can we help you with? *</label>
+                <textarea name="message" required rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                📅 Schedule Consultation
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+    }
+
+    function closeConsultationForm() {
+      const modal = document.getElementById('consultationModal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    async function submitConsultationForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-consultation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            business: formData.get('business'),
+            message: formData.get('message'),
+            form_type: 'consultation'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! Your consultation request has been submitted successfully. We will contact you within 24 hours.');
+          closeConsultationForm();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error submitting your request. Please try again or contact us directly.');
+      }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('consultationModal');
+      if (modal && event.target === modal) {
+        closeConsultationForm();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
