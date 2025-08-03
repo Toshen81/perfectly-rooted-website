@@ -278,10 +278,10 @@
             <li>Follow-up email support (30 days)</li>
             <li>Action plan with next steps</li>
           </ul>
-          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+          <button onclick="openPackageForm('Starter Package')" class="package-button">
             <i class="fas fa-rocket"></i>
             Get Started
-          </a>
+          </button>
         </div>
 
         <div class="package-card featured">
@@ -305,10 +305,10 @@
             <li>Quarterly progress reviews</li>
             <li>Custom resource library access</li>
           </ul>
-          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+          <button onclick="openPackageForm('Growth Package')" class="package-button">
             <i class="fas fa-star"></i>
             Most Popular Choice
-          </a>
+          </button>
         </div>
 
         <div class="package-card">
@@ -331,10 +331,10 @@
             <li>Technical setup assistance (email, systems)</li>
             <li>Optional SOP support and documentation</li>
           </ul>
-          <a href="contact.html" class="package-button">
+          <button onclick="openPackageForm('VA Onboarding Package')" class="package-button">
             <i class="fas fa-user-plus"></i>
             Get Started with VA Onboarding
-          </a>
+          </button>
         </div>
 
         <div class="package-card">
@@ -359,10 +359,10 @@
             <li>Market expansion planning</li>
             <li>Ongoing advisory relationship</li>
           </ul>
-          <a href="https://form.jotform.com/251166993980066" target="_blank" class="package-button">
+          <button onclick="openPackageForm('Enterprise Package')" class="package-button">
             <i class="fas fa-crown"></i>
             Premium Choice
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -506,10 +506,10 @@
       <h2>🌟 Ready to Choose Your Package?</h2>
       <p>Not sure which package is right for you? Schedule a complimentary consultation to discuss your specific needs and get personalized recommendations.</p>
       <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="https://form.jotform.com/251166993980066" target="_blank" class="btn btn-secondary">
+        <button onclick="openConsultationForm()" class="btn btn-secondary">
           <i class="fas fa-calendar-alt"></i>
           Free Consultation
-        </a>
+        </button>
         <a href="contact.html" class="btn btn-primary">
           <i class="fas fa-comments"></i>
           Ask Questions
@@ -558,6 +558,178 @@
 
     document.querySelectorAll('.scroll-animate').forEach(el => {
       observer.observe(el);
+    });
+
+    // Package form functionality
+    function openPackageForm(packageName) {
+      const formHtml = `
+        <div id="packageModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin: 0; color: var(--primary-color);">📦 ${packageName} - Get Started</h3>
+              <button onclick="closePackageForm()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <form id="packageForm" onsubmit="submitPackageForm(event, '${packageName}')">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Phone</label>
+                <input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Business Name</label>
+                <input type="text" name="business" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tell us about your business goals *</label>
+                <textarea name="message" required rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;" placeholder="What are your main business challenges and goals?"></textarea>
+              </div>
+              <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                📦 Get Started with ${packageName}
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+    }
+
+    function closePackageForm() {
+      const modal = document.getElementById('packageModal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    async function submitPackageForm(event, packageName) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-package', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            business: formData.get('business'),
+            message: formData.get('message'),
+            package: packageName,
+            form_type: 'package'
+          })
+        });
+
+        if (response.ok) {
+          alert(`✅ Thank you! Your ${packageName} request has been submitted successfully. We will contact you within 24 hours to discuss next steps.`);
+          closePackageForm();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error submitting your request. Please try again or contact us directly.');
+      }
+    }
+
+    // Consultation form functionality
+    function openConsultationForm() {
+      const formHtml = `
+        <div id="consultationModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin: 0; color: var(--primary-color);">📅 Book Your Free Consultation</h3>
+              <button onclick="closeConsultationForm()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <form id="consultationForm" onsubmit="submitConsultationForm(event)">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Phone</label>
+                <input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Business Name</label>
+                <input type="text" name="business" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">What can we help you with? *</label>
+                <textarea name="message" required rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                📅 Schedule Consultation
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+    }
+
+    function closeConsultationForm() {
+      const modal = document.getElementById('consultationModal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    async function submitConsultationForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-consultation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            business: formData.get('business'),
+            message: formData.get('message'),
+            form_type: 'consultation'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! Your consultation request has been submitted successfully. We will contact you within 24 hours.');
+          closeConsultationForm();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error submitting your request. Please try again or contact us directly.');
+      }
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(event) {
+      const packageModal = document.getElementById('packageModal');
+      const consultationModal = document.getElementById('consultationModal');
+      
+      if (packageModal && event.target === packageModal) {
+        closePackageForm();
+      }
+      if (consultationModal && event.target === consultationModal) {
+        closeConsultationForm();
+      }
     });
   </script>
 </body>

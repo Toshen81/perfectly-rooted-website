@@ -251,7 +251,7 @@
     <div class="contact-content scroll-animate">
       <div class="contact-form">
         <h3><i class="fas fa-envelope"></i> Send Us a Message</h3>
-        <form action="https://formspree.io/f/xldbdzap" method="POST">
+        <form id="contactForm" onsubmit="submitContactForm(event)">
           <div class="form-group">
             <label for="name">👤 Your Name</label>
             <input type="text" id="name" name="name" required>
@@ -318,10 +318,10 @@
         <div class="schedule-section">
           <h3><i class="fas fa-calendar-check"></i> Schedule Your Complimentary Consultation</h3>
           <p>Book a free 30-minute consultation to discuss your business goals and explore how we can help you achieve them.</p>
-          <a href="https://form.jotform.com/251166993980066" target="_blank" class="schedule-button">
+          <button onclick="openConsultationForm()" class="schedule-button">
             <i class="fas fa-calendar-alt"></i>
             Schedule Now
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -378,10 +378,10 @@
       <h2>🚀 Ready to Transform Your Business?</h2>
       <p>Don't wait to start your growth journey. Whether you have questions about our services or are ready to get started, we're here to help you succeed.</p>
       <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="https://form.jotform.com/251166993980066" target="_blank" class="btn btn-secondary">
+        <button onclick="openConsultationForm()" class="btn btn-secondary">
           <i class="fas fa-calendar-alt"></i>
           Book Free Consultation
-        </a>
+        </button>
         <a href="packages.html" class="btn btn-primary">
           <i class="fas fa-box"></i>
           View Our Packages
@@ -432,18 +432,132 @@
       observer.observe(el);
     });
 
-    // Add loading animation to form submission
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const button = this.querySelector('.submit-button');
+    // Contact form submission
+    async function submitContactForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const button = form.querySelector('button[type="submit"]');
       const originalText = button.innerHTML;
+      
       button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
       button.disabled = true;
       
-      // Re-enable after form submission (this is just for UX, form will redirect)
-      setTimeout(() => {
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            company: formData.get('company'),
+            interest: formData.get('interest'),
+            message: formData.get('message'),
+            form_type: 'contact'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! Your message has been sent successfully. We will respond within 24 hours.');
+          form.reset();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error sending your message. Please try again or contact us directly.');
+      } finally {
         button.innerHTML = originalText;
         button.disabled = false;
-      }, 3000);
+      }
+    }
+
+    // Consultation form functionality
+    function openConsultationForm() {
+      const formHtml = `
+        <div id="consultationModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin: 0; color: var(--primary-color);">📅 Book Your Free Consultation</h3>
+              <button onclick="closeConsultationForm()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <form id="consultationForm" onsubmit="submitConsultationForm(event)">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Phone</label>
+                <input type="tel" name="phone" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Business Name</label>
+                <input type="text" name="business" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">What can we help you with? *</label>
+                <textarea name="message" required rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                📅 Schedule Consultation
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+    }
+
+    function closeConsultationForm() {
+      const modal = document.getElementById('consultationModal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    async function submitConsultationForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-consultation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            business: formData.get('business'),
+            message: formData.get('message'),
+            form_type: 'consultation'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! Your consultation request has been submitted successfully. We will contact you within 24 hours.');
+          closeConsultationForm();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error submitting your request. Please try again or contact us directly.');
+      }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('consultationModal');
+      if (modal && event.target === modal) {
+        closeConsultationForm();
+      }
     });
   </script>
 </body>
