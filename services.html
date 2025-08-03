@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services - Perfectly Rooted Solutions</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-accent);
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .service-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-accent);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+
+    .service-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .service-card p {
+      color: var(--text-light);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .service-features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .service-features li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-color);
+    }
+
+    .service-features li::before {
+      content: '✅';
+      font-size: 1rem;
+    }
+
+    .service-cta {
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .process-section {
+      background: var(--light-gray);
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      margin: 4rem 0;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .process-step {
+      text-align: center;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: var(--gradient-primary);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+    }
+
+    .process-step h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-section {
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 4rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial-section::before {
+      content: '💬';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 8rem;
+      opacity: 0.1;
+      transform: rotate(15deg);
+    }
+
+    .testimonial-section h2 {
+      color: var(--white);
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-section h2::after {
+      background: var(--accent-color);
+    }
+
+    .testimonial {
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--accent-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="logo.png" alt="Perfectly Rooted Solutions Logo">
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="about.html">🌱 About</a>
+        <a href="services.html" class="active">⚙️ Services</a>
+        <a href="packages.html">📦 Packages</a>
+        <a href="contact.html">📞 Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="page-header-content fade-in-up">
+      <h1>⚙️ Our Services</h1>
+      <p>Comprehensive business solutions tailored to help your organization thrive and grow</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="section scroll-animate">
+      <div class="section-header">
+        <h2>🚀 What We Offer</h2>
+        <p>Professional services designed to address every aspect of your business growth journey</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>📈 Business Strategy Consulting</h3>
+          <p>Strategic planning and execution guidance to help your business reach its full potential and achieve sustainable growth in competitive markets.</p>
+          <ul class="service-features">
+            <li>Market analysis and competitive positioning</li>
+            <li>Strategic planning and roadmap development</li>
+            <li>Performance metrics and KPI establishment</li>
+            <li>Growth strategy implementation</li>
+            <li>Risk assessment and mitigation planning</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-building"></i>
+          </div>
+          <h3>🏢 Business Structure Setup</h3>
+          <p>Professional assistance with LLC, S-Corp, and Nonprofit formation to establish the right legal and operational foundation for your business.</p>
+          <ul class="service-features">
+            <li>Entity selection and formation guidance</li>
+            <li>Legal documentation and filing</li>
+            <li>Tax structure optimization</li>
+            <li>Compliance requirements setup</li>
+            <li>Operational framework development</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <h3>💰 Capital Readiness & Resource Planning</h3>
+          <p>Prepare your business for investment opportunities and optimize resource allocation for maximum efficiency and growth potential.</p>
+          <ul class="service-features">
+            <li>Financial modeling and projections</li>
+            <li>Investment pitch preparation</li>
+            <li>Due diligence readiness</li>
+            <li>Resource allocation optimization</li>
+            <li>Funding strategy development</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <h3>⚙️ Process Improvement</h3>
+          <p>Streamline operations and enhance productivity through systematic process analysis, optimization, and implementation of best practices.</p>
+          <ul class="service-features">
+            <li>Current state process mapping</li>
+            <li>Efficiency gap analysis</li>
+            <li>Workflow optimization design</li>
+            <li>Technology integration planning</li>
+            <li>Change management support</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>👥 VA Onboarding Services</h3>
+          <p>Complete virtual assistant sourcing and onboarding solution to help you find, hire, and integrate the perfect VA for your business needs.</p>
+          <ul class="service-features">
+            <li>Discovery call to assess business needs and requirements</li>
+            <li>Complete sourcing and screening process</li>
+            <li>Job posting and application management</li>
+            <li>Professional interviews and English proficiency verification</li>
+            <li>Contract documentation (NDA, agreements, W-8BEN forms)</li>
+            <li>Onboarding and orientation preparation</li>
+            <li>Technical setup assistance (email, systems integration)</li>
+            <li>Optional SOP support and documentation</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-puzzle-piece"></i>
+          </div>
+          <h3>🧩 Custom Consulting Packages</h3>
+          <p>Tailored solutions designed specifically for your unique business challenges, industry requirements, and growth objectives.</p>
+          <ul class="service-features">
+            <li>Customized solution development</li>
+            <li>Industry-specific expertise</li>
+            <li>Flexible engagement models</li>
+            <li>Specialized project management</li>
+            <li>Ongoing advisory support</li>
+          </ul>
+          <div class="service-cta">
+            <a href="contact.html" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="process-section scroll-animate">
+      <div class="section-header">
+        <h2>🔄 Our Process</h2>
+        <p>A proven methodology that ensures successful outcomes for every client engagement</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <h3>🔍 Discovery</h3>
+          <p>We begin with a comprehensive assessment of your current situation, challenges, and goals to understand your unique needs.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <h3>📋 Strategy</h3>
+          <p>Based on our findings, we develop a customized strategy that aligns with your vision and addresses your specific challenges.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <h3>🚀 Implementation</h3>
+          <p>We work closely with you to execute the strategy, providing guidance and support throughout the implementation process.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">4</div>
+          <h3>📊 Optimization</h3>
+          <p>We continuously monitor progress and make adjustments to ensure optimal results and long-term success.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-section scroll-animate">
+      <h2>💬 What Our Clients Say</h2>
+      <div class="testimonial">
+        "Working with Perfectly Rooted Solutions transformed our business approach. Their strategic guidance helped us increase revenue by 150% while streamlining our operations. The team's expertise and dedication to our success made all the difference."
+      </div>
+      <div class="testimonial-author">- Sarah Johnson, CEO of GrowthTech Solutions</div>
+    </div>
+
+    <div class="highlight-section scroll-animate">
+      <h2>🌟 Ready to Get Started?</h2>
+      <p>Let's discuss which services are the best fit for your business needs and growth objectives. Schedule a complimentary consultation today.</p>
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://form.jotform.com/251166993980066" target="_blank" class="btn btn-secondary">
+          <i class="fas fa-calendar-alt"></i>
+          Book Consultation
+        </a>
+        <a href="packages.html" class="btn btn-primary">
+          <i class="fas fa-box"></i>
+          View Packages
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-section">
+          <h4>📞 Contact Information</h4>
+          <p>Phone: 800.893.0006</p>
+          <p>Email: info@perfectly-rooted.com</p>
+        </div>
+        <div class="footer-section">
+          <h4>📍 Location</h4>
+          <p>Greenville, SC</p>
+        </div>
+        <div class="footer-section">
+          <h4>⚖️ Legal</h4>
+          <a href="/terms.html">Terms & Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
+
