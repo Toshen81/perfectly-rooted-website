@@ -235,10 +235,10 @@
       <h2>📘 Download Our Free Business Guide</h2>
       <p>Get your copy of "Rooted in Success" and build a stronger foundation for your business with proven strategies and actionable insights.</p>
       <div style="margin-top: 2rem;">
-        <a href="ebooks/Rooted_in_Success.pdf" target="_blank" class="guide-button">
+        <button onclick="openEbookForm()" class="guide-button">
           <i class="fas fa-download"></i>
           Download Free Guide
-        </a>
+        </button>
       </div>
     </div>
 
@@ -408,11 +408,87 @@
       }
     }
 
+    // Ebook download form functionality
+    function openEbookForm() {
+      const formHtml = `
+        <div id="ebookModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="margin: 0; color: var(--primary-color);">📘 Download "Rooted in Success"</h3>
+              <button onclick="closeEbookForm()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <p style="margin-bottom: 1.5rem; color: #666;">Enter your email address and we'll send you the free business guide immediately!</p>
+            <form id="ebookForm" onsubmit="submitEbookForm(event)">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email Address *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Business Name (Optional)</label>
+                <input type="text" name="business" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
+              </div>
+              <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                📧 Send Me the Free Guide
+              </button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', formHtml);
+    }
+
+    function closeEbookForm() {
+      const modal = document.getElementById('ebookModal');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    async function submitEbookForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('https://perfectly-rooted-forms-backend.onrender.com/api/submit-ebook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            business: formData.get('business'),
+            form_type: 'ebook_download'
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Thank you! The "Rooted in Success" business guide has been sent to your email address. Please check your inbox (and spam folder) within the next few minutes.');
+          closeEbookForm();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('❌ There was an error processing your request. Please try again or contact us directly.');
+      }
+    }
+
     // Close modal when clicking outside
     document.addEventListener('click', function(event) {
-      const modal = document.getElementById('consultationModal');
-      if (modal && event.target === modal) {
+      const consultationModal = document.getElementById('consultationModal');
+      const ebookModal = document.getElementById('ebookModal');
+      
+      if (consultationModal && event.target === consultationModal) {
         closeConsultationForm();
+      }
+      
+      if (ebookModal && event.target === ebookModal) {
+        closeEbookForm();
       }
     });
   </script>
