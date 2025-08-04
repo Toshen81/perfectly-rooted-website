@@ -194,7 +194,8 @@ def submit_ebook():
         db.session.commit()
         
         # Send ebook to user
-       user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
+            user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
+
         user_body = f"""
         <html>
         <body>
