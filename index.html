@@ -10,31 +10,8 @@
   <link rel="stylesheet" href="shared-styles.css">
   
   <style>
-    /* Override logo size to prevent it from being huge */
-    .nav-logo img, .logo {
-      max-width: 120px !important;
-      max-height: 60px !important;
-      width: auto !important;
-      height: auto !important;
-    }
-
-    /* Ensure navigation bar doesn't get oversized */
-    .navbar {
-      padding: 1rem 0 !important;
-      min-height: auto !important;
-    }
-
-    .nav-container {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      max-width: 1200px !important;
-      margin: 0 auto !important;
-      padding: 0 2rem !important;
-    }
-
-    /* Hide any large logo that might be in the hero section */
-    .hero img, .hero-content img {
+    /* Only override the specific logo issue without breaking the layout */
+    .hero img[src*="logo"], .hero-content img[src*="logo"] {
       display: none !important;
     }
 
@@ -394,7 +371,7 @@
         <div class="founder-text">
           <h2>🌱 Rooted in Purpose. Built for Growth.</h2>
           <p><strong>Meet Your Strategic Partner</strong></p>
-          <p>I'm <strong>Toshen Poole</strong> (pronounced Tah-SHEEN)—a mom, multi-business owner, and systems strategist who learned how to build smarter by starting scrappy.</p>
+          <p>I'm <strong>Toshen</strong> (pronounced Tah-SHEEN)—a mom, multi-business owner, and systems strategist who learned how to build smarter by starting scrappy.</p>
           <p>Perfectly Rooted Solutions was born from my own journey of juggling life, family, and entrepreneurship. I know what it's like to wear every hat—and what it takes to scale with structure.</p>
           <p>Now, I help other vision-led entrepreneurs do the same: get organized, get support, and grow with intention.</p>
           <p><strong>Let's build something sustainable—together.</strong></p>
@@ -517,22 +494,18 @@
   <script>
     // Modal functions
     function openConsultationForm() {
-      console.log('Opening consultation modal');
       document.getElementById('consultationModal').style.display = 'block';
     }
 
     function closeConsultationModal() {
-      console.log('Closing consultation modal');
       document.getElementById('consultationModal').style.display = 'none';
     }
 
     function openEbookForm() {
-      console.log('Opening ebook modal');
       document.getElementById('ebookModal').style.display = 'block';
     }
 
     function closeEbookModal() {
-      console.log('Closing ebook modal');
       document.getElementById('ebookModal').style.display = 'none';
     }
 
@@ -548,10 +521,9 @@
       }
     }
 
-    // Form submissions
+    // Form submissions - SINGLE EVENT HANDLERS ONLY
     async function submitConsultationForm(event) {
       event.preventDefault();
-      console.log('Submitting consultation form');
       const formData = new FormData(event.target);
       const data = Object.fromEntries(formData.entries());
       
@@ -579,7 +551,6 @@
 
     async function submitEbookForm(event) {
       event.preventDefault();
-      console.log('Submitting ebook form');
       const formData = new FormData(event.target);
       const data = Object.fromEntries(formData.entries());
       
@@ -621,33 +592,6 @@
 
     document.querySelectorAll('.scroll-animate').forEach(el => {
       observer.observe(el);
-    });
-
-    // Test button functionality on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Page loaded, testing button functionality');
-      
-      // Test if buttons exist
-      const consultButtons = document.querySelectorAll('button[onclick*="openConsultationForm"]');
-      const ebookButtons = document.querySelectorAll('button[onclick*="openEbookForm"]');
-      
-      console.log('Consultation buttons found:', consultButtons.length);
-      console.log('Ebook buttons found:', ebookButtons.length);
-      
-      // Add click event listeners as backup
-      consultButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          openConsultationForm();
-        });
-      });
-      
-      ebookButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          openEbookForm();
-        });
-      });
     });
   </script>
 </body>
