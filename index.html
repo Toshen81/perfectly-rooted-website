@@ -10,6 +10,34 @@
   <link rel="stylesheet" href="shared-styles.css">
   
   <style>
+    /* Override logo size to prevent it from being huge */
+    .nav-logo img, .logo {
+      max-width: 120px !important;
+      max-height: 60px !important;
+      width: auto !important;
+      height: auto !important;
+    }
+
+    /* Ensure navigation bar doesn't get oversized */
+    .navbar {
+      padding: 1rem 0 !important;
+      min-height: auto !important;
+    }
+
+    .nav-container {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+      padding: 0 2rem !important;
+    }
+
+    /* Hide any large logo that might be in the hero section */
+    .hero img, .hero-content img {
+      display: none !important;
+    }
+
     /* Button Styles */
     .cta-button, .guide-button, .submit-btn {
       display: inline-flex;
