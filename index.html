@@ -8,13 +8,210 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="shared-styles.css">
-  
-  <style>
-    /* Only override the specific logo issue without breaking the layout */
-    .hero img[src*="logo"], .hero-content img[src*="logo"] {
-      display: none !important;
-    }
+</head>
+<body>
+  <!-- Exact same navigation structure as Services page -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="logo.png" alt="Perfectly Rooted Solutions" class="logo">
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link active">🏠 Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="about.html" class="nav-link">🌱 About</a>
+        </li>
+        <li class="nav-item">
+          <a href="services.html" class="nav-link">⚙️ Services</a>
+        </li>
+        <li class="nav-item">
+          <a href="packages.html" class="nav-link">📦 Packages</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">📞 Contact</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
+  <div class="container">
+    <section class="hero scroll-animate">
+      <div class="hero-content">
+        <h1>🌳 Rooted in Purpose. Growing with Strategy.</h1>
+        <p>Empowering entrepreneurs and organizations to align purpose with performance through strategic guidance and innovative solutions.</p>
+        <button onclick="openConsultationForm()" class="cta-button">
+          <i class="fas fa-calendar-alt"></i>
+          Book a Consultation
+        </button>
+      </div>
+    </section>
+
+    <section class="free-guide scroll-animate">
+      <h2>📘 Download Our Free Business Guide</h2>
+      <p>Get your copy of "Rooted in Success" and build a stronger foundation for your business with proven strategies and actionable insights.</p>
+      <button onclick="openEbookForm()" class="guide-button">
+        <i class="fas fa-download"></i>
+        Download Free Guide
+      </button>
+    </section>
+
+    <section class="features-section scroll-animate">
+      <div class="section-header">
+        <h2>🚀 Why Choose Perfectly Rooted Solutions?</h2>
+        <p>We provide comprehensive business solutions that help you grow from the ground up</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">💡</span>
+          <h3>Strategic Innovation</h3>
+          <p>Cutting-edge strategies tailored to your unique business vision and market position.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <h3>Results-Driven</h3>
+          <p>Focused on delivering measurable outcomes that drive sustainable business growth.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🤝</span>
+          <h3>Trusted Partnership</h3>
+          <p>Building long-term relationships based on integrity, transparency, and mutual success.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <h3>Rapid Implementation</h3>
+          <p>Quick turnaround times without compromising on quality or attention to detail.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="founder-section scroll-animate">
+      <div class="founder-content">
+        <div class="founder-text">
+          <h2>🌱 Rooted in Purpose. Built for Growth.</h2>
+          <p><strong>Meet Your Strategic Partner</strong></p>
+          <p>I'm <strong>Toshen</strong> (pronounced Tah-SHEEN)—a mom, multi-business owner, and systems strategist who learned how to build smarter by starting scrappy.</p>
+          <p>Perfectly Rooted Solutions was born from my own journey of juggling life, family, and entrepreneurship. I know what it's like to wear every hat—and what it takes to scale with structure.</p>
+          <p>Now, I help other vision-led entrepreneurs do the same: get organized, get support, and grow with intention.</p>
+          <p><strong>Let's build something sustainable—together.</strong></p>
+          <button onclick="openConsultationForm()" class="cta-button">
+            Work With Me
+          </button>
+        </div>
+        <div class="founder-image">
+          <img src="toshen_professional_photo.png" alt="Toshen - Founder" class="founder-photo">
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section scroll-animate">
+      <h2>🌟 Ready to Transform Your Business?</h2>
+      <p>Join hundreds of successful entrepreneurs who have grown their businesses with our proven strategies and expert guidance.</p>
+      <button onclick="openConsultationForm()" class="cta-button">
+        <i class="fas fa-rocket"></i>
+        Start Your Journey
+      </button>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-section">
+          <h4>📞 Contact Information</h4>
+          <p>Phone: 800.893.0006</p>
+          <p>Email: info@perfectly-rooted.com</p>
+        </div>
+        <div class="footer-section">
+          <h4>📍 Location</h4>
+          <p>Greenville, SC</p>
+        </div>
+        <div class="footer-section">
+          <h4>⚖️ Legal</h4>
+          <a href="/terms.html">Terms & Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Consultation Modal -->
+  <div id="consultationModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeConsultationModal()">&times;</span>
+      <h2>📅 Book Your Free Consultation</h2>
+      <p>Let's discuss how we can help your business grow and thrive!</p>
+      <form id="consultationForm" onsubmit="submitConsultationForm(event)">
+        <div class="form-group">
+          <label for="consultName">Name *</label>
+          <input type="text" id="consultName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="consultEmail">Email Address *</label>
+          <input type="email" id="consultEmail" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="consultPhone">Phone Number</label>
+          <input type="tel" id="consultPhone" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="consultBusiness">Business Name</label>
+          <input type="text" id="consultBusiness" name="company">
+        </div>
+        <div class="form-group">
+          <label for="consultInterest">What are you most interested in?</label>
+          <select id="consultInterest" name="interest">
+            <option value="">Select an option</option>
+            <option value="Strategic Planning">Strategic Planning</option>
+            <option value="Business Structure">Business Structure</option>
+            <option value="Growth Strategy">Growth Strategy</option>
+            <option value="Process Improvement">Process Improvement</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="consultMessage">Tell us about your business goals</label>
+          <textarea id="consultMessage" name="message" rows="4"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-calendar-check"></i>
+          Schedule My Free Consultation
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ebook Modal -->
+  <div id="ebookModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEbookModal()">&times;</span>
+      <h2>📘 Download "Rooted in Success"</h2>
+      <p>Enter your email address and we'll send you the free business guide immediately!</p>
+      <form id="ebookForm" onsubmit="submitEbookForm(event)">
+        <div class="form-group">
+          <label for="ebookName">Name *</label>
+          <input type="text" id="ebookName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="ebookEmail">Email Address *</label>
+          <input type="email" id="ebookEmail" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="ebookBusiness">Business Name (Optional)</label>
+          <input type="text" id="ebookBusiness" name="business_name">
+        </div>
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-envelope"></i>
+          Send Me the Free Guide
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <style>
     /* Button Styles */
     .cta-button, .guide-button, .submit-btn {
       display: inline-flex;
@@ -289,207 +486,6 @@
       }
     }
   </style>
-</head>
-<body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <img src="logo.png" alt="Perfectly Rooted Solutions" class="logo">
-      </div>
-      <ul class="nav-menu">
-        <li class="nav-item">
-          <a href="index.html" class="nav-link active">🏠 Home</a>
-        </li>
-        <li class="nav-item">
-          <a href="about.html" class="nav-link">🌱 About</a>
-        </li>
-        <li class="nav-item">
-          <a href="services.html" class="nav-link">⚙️ Services</a>
-        </li>
-        <li class="nav-item">
-          <a href="packages.html" class="nav-link">📦 Packages</a>
-        </li>
-        <li class="nav-item">
-          <a href="contact.html" class="nav-link">📞 Contact</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <div class="container">
-    <section class="hero scroll-animate">
-      <div class="hero-content">
-        <h1>🌳 Rooted in Purpose. Growing with Strategy.</h1>
-        <p>Empowering entrepreneurs and organizations to align purpose with performance through strategic guidance and innovative solutions.</p>
-        <button onclick="openConsultationForm()" class="cta-button">
-          <i class="fas fa-calendar-alt"></i>
-          Book a Consultation
-        </button>
-      </div>
-    </section>
-
-    <section class="free-guide scroll-animate">
-      <h2>📘 Download Our Free Business Guide</h2>
-      <p>Get your copy of "Rooted in Success" and build a stronger foundation for your business with proven strategies and actionable insights.</p>
-      <button onclick="openEbookForm()" class="guide-button">
-        <i class="fas fa-download"></i>
-        Download Free Guide
-      </button>
-    </section>
-
-    <section class="features-section scroll-animate">
-      <div class="section-header">
-        <h2>🚀 Why Choose Perfectly Rooted Solutions?</h2>
-        <p>We provide comprehensive business solutions that help you grow from the ground up</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">💡</span>
-          <h3>Strategic Innovation</h3>
-          <p>Cutting-edge strategies tailored to your unique business vision and market position.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">🎯</span>
-          <h3>Results-Driven</h3>
-          <p>Focused on delivering measurable outcomes that drive sustainable business growth.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">🤝</span>
-          <h3>Trusted Partnership</h3>
-          <p>Building long-term relationships based on integrity, transparency, and mutual success.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">⚡</span>
-          <h3>Rapid Implementation</h3>
-          <p>Quick turnaround times without compromising on quality or attention to detail.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="founder-section scroll-animate">
-      <div class="founder-content">
-        <div class="founder-text">
-          <h2>🌱 Rooted in Purpose. Built for Growth.</h2>
-          <p><strong>Meet Your Strategic Partner</strong></p>
-          <p>I'm <strong>Toshen</strong> (pronounced Tah-SHEEN)—a mom, multi-business owner, and systems strategist who learned how to build smarter by starting scrappy.</p>
-          <p>Perfectly Rooted Solutions was born from my own journey of juggling life, family, and entrepreneurship. I know what it's like to wear every hat—and what it takes to scale with structure.</p>
-          <p>Now, I help other vision-led entrepreneurs do the same: get organized, get support, and grow with intention.</p>
-          <p><strong>Let's build something sustainable—together.</strong></p>
-          <button onclick="openConsultationForm()" class="cta-button">
-            Work With Me
-          </button>
-        </div>
-        <div class="founder-image">
-          <img src="toshen_professional_photo.png" alt="Toshen Poole - Founder" class="founder-photo">
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-section scroll-animate">
-      <h2>🌟 Ready to Transform Your Business?</h2>
-      <p>Join hundreds of successful entrepreneurs who have grown their businesses with our proven strategies and expert guidance.</p>
-      <button onclick="openConsultationForm()" class="cta-button">
-        <i class="fas fa-rocket"></i>
-        Start Your Journey
-      </button>
-    </section>
-  </div>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-info">
-        <div class="footer-section">
-          <h4>📞 Contact Information</h4>
-          <p>Phone: 800.893.0006</p>
-          <p>Email: info@perfectly-rooted.com</p>
-        </div>
-        <div class="footer-section">
-          <h4>📍 Location</h4>
-          <p>Greenville, SC</p>
-        </div>
-        <div class="footer-section">
-          <h4>⚖️ Legal</h4>
-          <a href="/terms.html">Terms & Privacy Policy</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2025 Perfectly Rooted Solutions. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Consultation Modal -->
-  <div id="consultationModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeConsultationModal()">&times;</span>
-      <h2>📅 Book Your Free Consultation</h2>
-      <p>Let's discuss how we can help your business grow and thrive!</p>
-      <form id="consultationForm" onsubmit="submitConsultationForm(event)">
-        <div class="form-group">
-          <label for="consultName">Name *</label>
-          <input type="text" id="consultName" name="name" required>
-        </div>
-        <div class="form-group">
-          <label for="consultEmail">Email Address *</label>
-          <input type="email" id="consultEmail" name="email" required>
-        </div>
-        <div class="form-group">
-          <label for="consultPhone">Phone Number</label>
-          <input type="tel" id="consultPhone" name="phone">
-        </div>
-        <div class="form-group">
-          <label for="consultBusiness">Business Name</label>
-          <input type="text" id="consultBusiness" name="company">
-        </div>
-        <div class="form-group">
-          <label for="consultInterest">What are you most interested in?</label>
-          <select id="consultInterest" name="interest">
-            <option value="">Select an option</option>
-            <option value="Strategic Planning">Strategic Planning</option>
-            <option value="Business Structure">Business Structure</option>
-            <option value="Growth Strategy">Growth Strategy</option>
-            <option value="Process Improvement">Process Improvement</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="consultMessage">Tell us about your business goals</label>
-          <textarea id="consultMessage" name="message" rows="4"></textarea>
-        </div>
-        <button type="submit" class="submit-btn">
-          <i class="fas fa-calendar-check"></i>
-          Schedule My Free Consultation
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Ebook Modal -->
-  <div id="ebookModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeEbookModal()">&times;</span>
-      <h2>📘 Download "Rooted in Success"</h2>
-      <p>Enter your email address and we'll send you the free business guide immediately!</p>
-      <form id="ebookForm" onsubmit="submitEbookForm(event)">
-        <div class="form-group">
-          <label for="ebookName">Name *</label>
-          <input type="text" id="ebookName" name="name" required>
-        </div>
-        <div class="form-group">
-          <label for="ebookEmail">Email Address *</label>
-          <input type="email" id="ebookEmail" name="email" required>
-        </div>
-        <div class="form-group">
-          <label for="ebookBusiness">Business Name (Optional)</label>
-          <input type="text" id="ebookBusiness" name="business_name">
-        </div>
-        <button type="submit" class="submit-btn">
-          <i class="fas fa-envelope"></i>
-          Send Me the Free Guide
-        </button>
-      </form>
-    </div>
-  </div>
 
   <script>
     // Modal functions
@@ -521,7 +517,7 @@
       }
     }
 
-    // Form submissions - SINGLE EVENT HANDLERS ONLY
+    // Form submissions
     async function submitConsultationForm(event) {
       event.preventDefault();
       const formData = new FormData(event.target);
