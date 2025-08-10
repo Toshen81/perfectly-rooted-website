@@ -2,11 +2,6 @@ from flask import Blueprint, request, jsonify
 import json
 import os
 from datetime import datetime
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 
 # Try to import database models - if it fails, we'll handle it gracefully
 try:
@@ -17,23 +12,43 @@ except ImportError as e:
     print(f"Database models not available: {e}")
     DATABASE_AVAILABLE = False
 
+# Try to import email modules
+try:
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.base import MIMEBase
+    from email import encoders
+    EMAIL_MODULES_AVAILABLE = True
+    print("Email modules imported successfully")
+except ImportError as e:
+    print(f"Email modules not available: {e}")
+    EMAIL_MODULES_AVAILABLE = False
+
 forms_bp = Blueprint('forms', __name__)
 
-def send_email_with_attachment(to_email, subject, body, attachment_path=None):
-    """Send email with optional PDF attachment"""
+def send_simple_email(to_email, subject, body):
+    """Send simple email without attachment first"""
     try:
+        print(f"=== EMAIL DEBUG START ===")
+        print(f"Attempting to send email to: {to_email}")
+        
+        if not EMAIL_MODULES_AVAILABLE:
+            print("ERROR: Email modules not available")
+            return False
+        
         # Email configuration
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
         sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
         sender_password = os.getenv('EMAIL_PASSWORD')
         
+        print(f"Sender email: {sender_email}")
+        print(f"Password available: {bool(sender_password)}")
+        
         if not sender_password:
             print("ERROR: EMAIL_PASSWORD environment variable not set")
             return False
-            
-        print(f"Attempting to send email to: {to_email}")
-        print(f"Using sender email: {sender_email}")
         
         # Create message
         msg = MIMEMultipart()
@@ -43,37 +58,28 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
         
         # Add body to email
         msg.attach(MIMEText(body, 'html'))
-        
-        # Add attachment if provided
-        if attachment_path and os.path.exists(attachment_path):
-            print(f"Attaching file: {attachment_path}")
-            with open(attachment_path, "rb") as attachment:
-                part = MIMEBase('application', 'octet-stream')
-                part.set_payload(attachment.read())
-                
-            encoders.encode_base64(part)
-            part.add_header(
-                'Content-Disposition',
-                f'attachment; filename= {os.path.basename(attachment_path)}'
-            )
-            msg.attach(part)
-            print("PDF attachment added successfully")
-        elif attachment_path:
-            print(f"WARNING: Attachment file not found: {attachment_path}")
+        print("Email message created successfully")
         
         # Send email
+        print("Connecting to SMTP server...")
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
+        print("SMTP connection established")
+        
         server.login(sender_email, sender_password)
+        print("SMTP login successful")
+        
         text = msg.as_string()
         server.sendmail(sender_email, to_email, text)
         server.quit()
         
         print(f"Email sent successfully to {to_email}")
+        print(f"=== EMAIL DEBUG END ===")
         return True
         
     except Exception as e:
         print(f"ERROR sending email: {str(e)}")
+        print(f"=== EMAIL DEBUG END (ERROR) ===")
         return False
 
 @forms_bp.route('/submit-consultation', methods=['POST'])
@@ -104,7 +110,6 @@ def submit_consultation():
                 
             except Exception as db_error:
                 print(f"Database save failed: {db_error}")
-                # Continue anyway - don't let database errors break the form
         
         return jsonify({
             'success': True,
@@ -146,7 +151,6 @@ def submit_package():
                 
             except Exception as db_error:
                 print(f"Database save failed: {db_error}")
-                # Continue anyway - don't let database errors break the form
         
         return jsonify({
             'success': True,
@@ -185,9 +189,10 @@ def submit_ebook():
                 
             except Exception as db_error:
                 print(f"Database save failed: {db_error}")
-                # Continue anyway - don't let database errors break the form
         
-        # Send ebook email with PDF attachment
+        # SEND EMAIL - This is the important part
+        print("=== STARTING EMAIL PROCESS ===")
+        
         user_email = data.get('email')
         user_name = data.get('name', 'Friend')
         user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
@@ -200,7 +205,9 @@ def submit_ebook():
                 
                 <p>Hi {user_name},</p>
                 
-                <p>Thank you for your interest in growing your business with strategic guidance! <strong>Your free business guide is attached to this email as a PDF.</strong></p>
+                <p>Thank you for your interest in growing your business with strategic guidance!</p>
+                
+                <p><strong>Note:</strong> This is a test email to confirm email delivery is working. The PDF attachment will be added once we confirm emails are being sent successfully.</p>
                 
                 <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
                     <h3 style="color: #002147; margin-top: 0;">📖 What's Inside Your Guide:</h3>
@@ -210,11 +217,6 @@ def submit_ebook():
                         <li>Proven systems for scaling your operations</li>
                         <li>Actionable insights from real business transformations</li>
                     </ul>
-                </div>
-                
-                <div style="background: #002147; color: white; padding: 15px; border-radius: 10px; margin: 20px 0; text-align: center;">
-                    <p style="margin: 0; font-size: 16px;"><strong>📎 Your PDF guide is attached to this email!</strong></p>
-                    <p style="margin: 5px 0 0 0; font-size: 14px;">Look for "rooted_in_success_ebook.pdf" in your email attachments</p>
                 </div>
                 
                 <p>Ready to take the next step? I'd love to discuss how we can help your business grow and thrive.</p>
@@ -228,50 +230,25 @@ def submit_ebook():
                 Founder, Perfectly Rooted Solutions<br>
                 📧 perfectlyrooted25@gmail.com<br>
                 📞 800.893.0006</p>
-                
-                <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                <p style="font-size: 12px; color: #666;">
-                    You're receiving this email because you downloaded our free business guide from perfectly-rooted.com. 
-                    If you have any questions, please don't hesitate to reach out!
-                </p>
             </div>
         </body>
         </html>
         """
         
-        # Find the PDF file - try multiple possible locations
-        possible_paths = [
-            'rooted_in_success_ebook.pdf',
-            './rooted_in_success_ebook.pdf',
-            '/opt/render/project/src/rooted_in_success_ebook.pdf',
-            '/opt/render/project/rooted_in_success_ebook.pdf',
-            os.path.join(os.path.dirname(__file__), '..', '..', 'rooted_in_success_ebook.pdf'),
-            os.path.join(os.getcwd(), 'rooted_in_success_ebook.pdf')
-        ]
-        
-        pdf_path = None
-        for path in possible_paths:
-            if os.path.exists(path):
-                pdf_path = path
-                print(f"Found PDF at: {pdf_path}")
-                break
-        
-        if not pdf_path:
-            print("WARNING: PDF file not found in any of the expected locations:")
-            for path in possible_paths:
-                print(f"  - {path} (exists: {os.path.exists(path)})")
-        
-        # Send email with PDF attachment
+        # Send simple email first (without attachment)
         try:
-            email_sent = send_email_with_attachment(user_email, user_subject, user_body, pdf_path)
+            print("Calling send_simple_email function...")
+            email_sent = send_simple_email(user_email, user_subject, user_body)
             
             if email_sent:
-                print(f"Ebook email with PDF sent successfully to {user_email}")
+                print(f"SUCCESS: Email sent to {user_email}")
             else:
-                print(f"Failed to send ebook email to {user_email}")
+                print(f"FAILED: Could not send email to {user_email}")
+                
         except Exception as email_error:
-            print(f"Email sending failed: {email_error}")
-            # Don't let email errors break the form submission
+            print(f"EXCEPTION in email sending: {email_error}")
+        
+        print("=== EMAIL PROCESS COMPLETE ===")
         
         return jsonify({
             'success': True,
