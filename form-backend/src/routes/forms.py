@@ -12,9 +12,7 @@ from email import encoders
 forms_bp = Blueprint('forms', __name__)
 
 def send_email_with_attachment(to_email, subject, body, attachment_path=None):
-    """Send email with optional PDF attachment"""
     try:
-        # Email configuration
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
         sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
@@ -25,18 +23,14 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
             return False
             
         print(f"Attempting to send email to: {to_email}")
-        print(f"Using sender email: {sender_email}")
         
-        # Create message
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = to_email
         msg['Subject'] = subject
         
-        # Add body to email
         msg.attach(MIMEText(body, 'html'))
         
-        # Add attachment if provided
         if attachment_path and os.path.exists(attachment_path):
             print(f"Attaching file: {attachment_path}")
             with open(attachment_path, "rb") as attachment:
@@ -53,7 +47,6 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
         elif attachment_path:
             print(f"WARNING: Attachment file not found: {attachment_path}")
         
-        # Send email
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
         server.login(sender_email, sender_password)
@@ -73,7 +66,6 @@ def submit_consultation():
     try:
         data = request.get_json()
         
-        # Create new submission
         submission = FormSubmission(
             form_type='consultation',
             name=data.get('name'),
@@ -89,26 +81,6 @@ def submit_consultation():
         
         db.session.add(submission)
         db.session.commit()
-        
-        # Send notification email to admin
-        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
-        admin_subject = f"🔔 New Consultation Request from {data.get('name', 'Unknown')}"
-        admin_body = f"""
-        <html>
-        <body>
-            <h2>New Consultation Request</h2>
-            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
-            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
-            <p><strong>Phone:</strong> {data.get('phone', 'Not provided')}</p>
-            <p><strong>Company:</strong> {data.get('company', 'Not provided')}</p>
-            <p><strong>Interest:</strong> {data.get('interest', 'Not specified')}</p>
-            <p><strong>Message:</strong> {data.get('message', 'No message provided')}</p>
-            <p><strong>Submitted:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
-        </body>
-        </html>
-        """
-        
-        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
@@ -127,7 +99,6 @@ def submit_package():
     try:
         data = request.get_json()
         
-        # Create new submission
         submission = FormSubmission(
             form_type='package',
             name=data.get('name'),
@@ -143,26 +114,6 @@ def submit_package():
         
         db.session.add(submission)
         db.session.commit()
-        
-        # Send notification email to admin
-        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
-        admin_subject = f"📦 New Package Inquiry from {data.get('name', 'Unknown')}"
-        admin_body = f"""
-        <html>
-        <body>
-            <h2>New Package Inquiry</h2>
-            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
-            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
-            <p><strong>Phone:</strong> {data.get('phone', 'Not provided')}</p>
-            <p><strong>Company:</strong> {data.get('company', 'Not provided')}</p>
-            <p><strong>Package:</strong> {data.get('package', 'Not specified')}</p>
-            <p><strong>Message:</strong> {data.get('message', 'No message provided')}</p>
-            <p><strong>Submitted:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
-        </body>
-        </html>
-        """
-        
-        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
@@ -182,7 +133,6 @@ def submit_ebook():
         data = request.get_json()
         print(f"Ebook submission received: {data}")
         
-        # Create new submission
         submission = FormSubmission(
             form_type='ebook',
             name=data.get('name'),
@@ -197,7 +147,6 @@ def submit_ebook():
         db.session.commit()
         print(f"Ebook submission saved to database for {data.get('email')}")
         
-        # Send ebook to user
         user_email = data.get('email')
         user_name = data.get('name', 'Friend')
         user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
@@ -233,25 +182,17 @@ def submit_ebook():
                 Founder, Perfectly Rooted Solutions<br>
                 📧 perfectlyrooted25@gmail.com<br>
                 📞 800.893.0006</p>
-                
-                <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                <p style="font-size: 12px; color: #666;">
-                    You're receiving this email because you downloaded our free business guide from perfectly-rooted.com. 
-                    If you have any questions, please don't hesitate to reach out!
-                </p>
             </div>
         </body>
         </html>
         """
         
-        # Find the PDF file - try multiple possible locations
+        # Try to find PDF file
         possible_paths = [
             'rooted_in_success_ebook.pdf',
             './rooted_in_success_ebook.pdf',
             '/opt/render/project/src/rooted_in_success_ebook.pdf',
-            '/opt/render/project/rooted_in_success_ebook.pdf',
-            os.path.join(os.path.dirname(__file__), '..', '..', 'rooted_in_success_ebook.pdf'),
-            os.path.join(os.getcwd(), 'rooted_in_success_ebook.pdf')
+            '/opt/render/project/rooted_in_success_ebook.pdf'
         ]
         
         pdf_path = None
@@ -262,35 +203,15 @@ def submit_ebook():
                 break
         
         if not pdf_path:
-            print("WARNING: PDF file not found in any of the expected locations:")
-            for path in possible_paths:
-                print(f"  - {path} (exists: {os.path.exists(path)})")
+            print("WARNING: PDF file not found")
         
-        # Send email with PDF attachment
+        # Send email
         email_sent = send_email_with_attachment(user_email, user_subject, user_body, pdf_path)
         
         if email_sent:
             print(f"Ebook email sent successfully to {user_email}")
         else:
             print(f"Failed to send ebook email to {user_email}")
-        
-        # Send notification to admin
-        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
-        admin_subject = f"📚 New Ebook Download from {user_name}"
-        admin_body = f"""
-        <html>
-        <body>
-            <h2>New Ebook Download</h2>
-            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
-            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
-            <p><strong>Business:</strong> {data.get('business_name', 'Not provided')}</p>
-            <p><strong>Downloaded:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
-            <p><strong>Email Sent:</strong> {'Yes' if email_sent else 'Failed'}</p>
-        </body>
-        </html>
-        """
-        
-        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
@@ -322,7 +243,6 @@ def get_submissions():
                 'created_at': submission.created_at.isoformat() if submission.created_at else None
             }
             
-            # Parse additional_data if it exists
             if submission.additional_data:
                 try:
                     additional_data = json.loads(submission.additional_data)
@@ -361,7 +281,6 @@ def get_submission(submission_id):
             'created_at': submission.created_at.isoformat() if submission.created_at else None
         }
         
-        # Parse additional_data if it exists
         if submission.additional_data:
             try:
                 additional_data = json.loads(submission.additional_data)
