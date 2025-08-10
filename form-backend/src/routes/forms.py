@@ -12,13 +12,20 @@ from email import encoders
 forms_bp = Blueprint('forms', __name__)
 
 def send_email_with_attachment(to_email, subject, body, attachment_path=None):
-    """Send email with optional attachment"""
+    """Send email with optional PDF attachment"""
     try:
         # Email configuration
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
-        sender_email = "perfectlyrooted25@gmail.com"
-        sender_password = os.environ.get('EMAIL_PASSWORD', 'your-app-password-here')
+        sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
+        sender_password = os.getenv('EMAIL_PASSWORD')
+        
+        if not sender_password:
+            print("ERROR: EMAIL_PASSWORD environment variable not set")
+            return False
+            
+        print(f"Attempting to send email to: {to_email}")
+        print(f"Using sender email: {sender_email}")
         
         # Create message
         msg = MIMEMultipart()
@@ -31,6 +38,7 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
         
         # Add attachment if provided
         if attachment_path and os.path.exists(attachment_path):
+            print(f"Attaching file: {attachment_path}")
             with open(attachment_path, "rb") as attachment:
                 part = MIMEBase('application', 'octet-stream')
                 part.set_payload(attachment.read())
@@ -38,9 +46,12 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
             encoders.encode_base64(part)
             part.add_header(
                 'Content-Disposition',
-                f'attachment; filename= {os.path.basename(attachment_path)}',
+                f'attachment; filename= {os.path.basename(attachment_path)}'
             )
             msg.attach(part)
+            print("PDF attachment added successfully")
+        elif attachment_path:
+            print(f"WARNING: Attachment file not found: {attachment_path}")
         
         # Send email
         server = smtplib.SMTP(smtp_server, smtp_port)
@@ -50,239 +61,276 @@ def send_email_with_attachment(to_email, subject, body, attachment_path=None):
         server.sendmail(sender_email, to_email, text)
         server.quit()
         
+        print(f"Email sent successfully to {to_email}")
         return True
         
     except Exception as e:
-        print(f"Error sending email: {str(e)}")
+        print(f"ERROR sending email: {str(e)}")
         return False
 
 @forms_bp.route('/submit-consultation', methods=['POST'])
 def submit_consultation():
-    """Handle consultation form submissions"""
     try:
-        data = request.get_json() if request.is_json else request.form.to_dict()
+        data = request.get_json()
         
-        # Create new form submission
+        # Create new submission
         submission = FormSubmission(
             form_type='consultation',
-            name=data.get('name', ''),
-            email=data.get('email', ''),
-            company=data.get('company', ''),
-            interest=data.get('interest', ''),
-            message=data.get('message', ''),
-            phone=data.get('phone', ''),
-            submission_data=json.dumps(data),
-            submitted_at=datetime.utcnow()
+            name=data.get('name'),
+            email=data.get('email'),
+            phone=data.get('phone'),
+            company=data.get('company'),
+            message=data.get('message'),
+            additional_data=json.dumps({
+                'interest': data.get('interest'),
+                'submitted_at': datetime.utcnow().isoformat()
+            })
         )
         
         db.session.add(submission)
         db.session.commit()
         
-        # Send admin notification email
-        admin_subject = f"New Consultation Request from {submission.name}"
+        # Send notification email to admin
+        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
+        admin_subject = f"🔔 New Consultation Request from {data.get('name', 'Unknown')}"
         admin_body = f"""
         <html>
         <body>
             <h2>New Consultation Request</h2>
-            <p><strong>Name:</strong> {submission.name}</p>
-            <p><strong>Email:</strong> {submission.email}</p>
-            <p><strong>Phone:</strong> {submission.phone or 'Not provided'}</p>
-            <p><strong>Business:</strong> {submission.company or 'Not provided'}</p>
-            <p><strong>Interest:</strong> {submission.interest or 'Not provided'}</p>
-            <p><strong>Message:</strong> {submission.message or 'Not provided'}</p>
-            <p><strong>Submitted:</strong> {submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
+            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
+            <p><strong>Phone:</strong> {data.get('phone', 'Not provided')}</p>
+            <p><strong>Company:</strong> {data.get('company', 'Not provided')}</p>
+            <p><strong>Interest:</strong> {data.get('interest', 'Not specified')}</p>
+            <p><strong>Message:</strong> {data.get('message', 'No message provided')}</p>
+            <p><strong>Submitted:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
         </body>
         </html>
         """
         
-        send_email_with_attachment(
-            to_email="info@perfectly-rooted.com",
-            subject=admin_subject,
-            body=admin_body
-        )
+        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
-            'message': 'Form submitted successfully!',
-            'submission_id': submission.id
+            'message': 'Consultation request submitted successfully'
         }), 200
         
     except Exception as e:
-        db.session.rollback()
+        print(f"Error in submit_consultation: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error submitting form: {str(e)}'
+            'message': 'An error occurred while processing your request'
         }), 500
 
 @forms_bp.route('/submit-package', methods=['POST'])
 def submit_package():
-    """Handle package inquiry form submissions"""
     try:
-        data = request.get_json() if request.is_json else request.form.to_dict()
+        data = request.get_json()
         
-        # Create new form submission
+        # Create new submission
         submission = FormSubmission(
             form_type='package',
-            name=data.get('name', ''),
-            email=data.get('email', ''),
-            company=data.get('company', ''),
-            interest=data.get('package', ''),
-            message=data.get('message', ''),
-            phone=data.get('phone', ''),
-            submission_data=json.dumps(data),
-            submitted_at=datetime.utcnow()
+            name=data.get('name'),
+            email=data.get('email'),
+            phone=data.get('phone'),
+            company=data.get('company'),
+            message=data.get('message'),
+            additional_data=json.dumps({
+                'package': data.get('package'),
+                'submitted_at': datetime.utcnow().isoformat()
+            })
         )
         
         db.session.add(submission)
         db.session.commit()
         
-        # Send admin notification email
-        admin_subject = f"New Package Inquiry from {submission.name}"
+        # Send notification email to admin
+        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
+        admin_subject = f"📦 New Package Inquiry from {data.get('name', 'Unknown')}"
         admin_body = f"""
         <html>
         <body>
             <h2>New Package Inquiry</h2>
-            <p><strong>Name:</strong> {submission.name}</p>
-            <p><strong>Email:</strong> {submission.email}</p>
-            <p><strong>Phone:</strong> {submission.phone or 'Not provided'}</p>
-            <p><strong>Business:</strong> {submission.company or 'Not provided'}</p>
-            <p><strong>Package Interest:</strong> {submission.interest or 'Not provided'}</p>
-            <p><strong>Message:</strong> {submission.message or 'Not provided'}</p>
-            <p><strong>Submitted:</strong> {submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
+            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
+            <p><strong>Phone:</strong> {data.get('phone', 'Not provided')}</p>
+            <p><strong>Company:</strong> {data.get('company', 'Not provided')}</p>
+            <p><strong>Package:</strong> {data.get('package', 'Not specified')}</p>
+            <p><strong>Message:</strong> {data.get('message', 'No message provided')}</p>
+            <p><strong>Submitted:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
         </body>
         </html>
         """
         
-        send_email_with_attachment(
-            to_email="info@perfectly-rooted.com",
-            subject=admin_subject,
-            body=admin_body
-        )
+        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
-            'message': 'Package inquiry submitted successfully!',
-            'submission_id': submission.id
+            'message': 'Package inquiry submitted successfully'
         }), 200
         
     except Exception as e:
-        db.session.rollback()
+        print(f"Error in submit_package: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error submitting form: {str(e)}'
+            'message': 'An error occurred while processing your request'
         }), 500
 
 @forms_bp.route('/submit-ebook', methods=['POST'])
 def submit_ebook():
-    """Handle ebook download form submissions"""
     try:
-        data = request.get_json() if request.is_json else request.form.to_dict()
+        data = request.get_json()
+        print(f"Ebook submission received: {data}")
         
-        # Create new form submission
+        # Create new submission
         submission = FormSubmission(
             form_type='ebook',
-            name=data.get('name', ''),
-            email=data.get('email', ''),
-            company=data.get('business_name', ''),
-            interest='ebook_download',
-            message='Ebook download request',
-            submission_data=json.dumps(data),
-            submitted_at=datetime.utcnow()
+            name=data.get('name'),
+            email=data.get('email'),
+            company=data.get('business_name'),
+            additional_data=json.dumps({
+                'submitted_at': datetime.utcnow().isoformat()
+            })
         )
         
         db.session.add(submission)
         db.session.commit()
+        print(f"Ebook submission saved to database for {data.get('email')}")
         
         # Send ebook to user
+        user_email = data.get('email')
+        user_name = data.get('name', 'Friend')
         user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
+        
         user_body = f"""
         <html>
-        <body>
-            <h2>Thank you, {submission.name}!</h2>
-            <p>Here's your free business guide: <strong>"Rooted in Success: A Strategic Guide for Growing Entrepreneurs"</strong></p>
-            
-            <p>This comprehensive guide includes:</p>
-            <ul>
-                <li>Strategic planning frameworks</li>
-                <li>Systems and processes for growth</li>
-                <li>Leadership development strategies</li>
-                <li>Actionable steps for scaling your business</li>
-            </ul>
-            
-            <p>I hope you find tremendous value in this guide. If you have any questions or would like to discuss how we can help your business grow, please don't hesitate to reach out.</p>
-            
-            <p>Best regards,<br>
-            <strong>Toshen Poole</strong><br>
-            Perfectly Rooted Solutions<br>
-            <a href="https://perfectly-rooted.com">perfectly-rooted.com</a><br>
-            info@perfectly-rooted.com</p>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #002147;">📚 Thank You for Downloading "Rooted in Success"!</h2>
+                
+                <p>Hi {user_name},</p>
+                
+                <p>Thank you for your interest in growing your business with strategic guidance! Your free business guide is attached to this email.</p>
+                
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #002147; margin-top: 0;">📖 What's Inside Your Guide:</h3>
+                    <ul style="margin: 10px 0;">
+                        <li>Strategic planning frameworks for sustainable growth</li>
+                        <li>Essential business structure foundations</li>
+                        <li>Proven systems for scaling your operations</li>
+                        <li>Actionable insights from real business transformations</li>
+                    </ul>
+                </div>
+                
+                <p>Ready to take the next step? I'd love to discuss how we can help your business grow and thrive.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://perfectly-rooted.com/contact.html" style="background: #002147; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block;">📅 Schedule Your Free Consultation</a>
+                </div>
+                
+                <p>Best regards,<br>
+                <strong>Toshen</strong><br>
+                Founder, Perfectly Rooted Solutions<br>
+                📧 perfectlyrooted25@gmail.com<br>
+                📞 800.893.0006</p>
+                
+                <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                <p style="font-size: 12px; color: #666;">
+                    You're receiving this email because you downloaded our free business guide from perfectly-rooted.com. 
+                    If you have any questions, please don't hesitate to reach out!
+                </p>
+            </div>
         </body>
         </html>
         """
         
-        # Get the ebook path
-        ebook_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'rooted_in_success_ebook.pdf')
+        # Find the PDF file - try multiple possible locations
+        possible_paths = [
+            'rooted_in_success_ebook.pdf',
+            './rooted_in_success_ebook.pdf',
+            '/opt/render/project/src/rooted_in_success_ebook.pdf',
+            '/opt/render/project/rooted_in_success_ebook.pdf',
+            os.path.join(os.path.dirname(__file__), '..', '..', 'rooted_in_success_ebook.pdf'),
+            os.path.join(os.getcwd(), 'rooted_in_success_ebook.pdf')
+        ]
         
-        send_email_with_attachment(
-            to_email=submission.email,
-            subject=user_subject,
-            body=user_body,
-            attachment_path=ebook_path
-        )
+        pdf_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                pdf_path = path
+                print(f"Found PDF at: {pdf_path}")
+                break
         
-        # Send admin notification
-        admin_subject = f"New Ebook Download from {submission.name}"
+        if not pdf_path:
+            print("WARNING: PDF file not found in any of the expected locations:")
+            for path in possible_paths:
+                print(f"  - {path} (exists: {os.path.exists(path)})")
+        
+        # Send email with PDF attachment
+        email_sent = send_email_with_attachment(user_email, user_subject, user_body, pdf_path)
+        
+        if email_sent:
+            print(f"Ebook email sent successfully to {user_email}")
+        else:
+            print(f"Failed to send ebook email to {user_email}")
+        
+        # Send notification to admin
+        admin_email = os.getenv('NOTIFICATION_EMAIL', 'perfectlyrooted25@gmail.com')
+        admin_subject = f"📚 New Ebook Download from {user_name}"
         admin_body = f"""
         <html>
         <body>
             <h2>New Ebook Download</h2>
-            <p><strong>Name:</strong> {submission.name}</p>
-            <p><strong>Email:</strong> {submission.email}</p>
-            <p><strong>Business:</strong> {submission.company or 'Not provided'}</p>
-            <p><strong>Downloaded:</strong> {submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
+            <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
+            <p><strong>Business:</strong> {data.get('business_name', 'Not provided')}</p>
+            <p><strong>Downloaded:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+            <p><strong>Email Sent:</strong> {'Yes' if email_sent else 'Failed'}</p>
         </body>
         </html>
         """
         
-        send_email_with_attachment(
-            to_email="info@perfectly-rooted.com",
-            subject=admin_subject,
-            body=admin_body
-        )
+        send_email_with_attachment(admin_email, admin_subject, admin_body)
         
         return jsonify({
             'success': True,
-            'message': 'Ebook sent successfully!',
-            'submission_id': submission.id
+            'message': 'Ebook request processed successfully'
         }), 200
         
     except Exception as e:
-        db.session.rollback()
+        print(f"Error in submit_ebook: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error processing ebook request: {str(e)}'
+            'message': 'An error occurred while processing your request'
         }), 500
 
 @forms_bp.route('/submissions', methods=['GET'])
 def get_submissions():
-    """Get all form submissions (for admin access)"""
     try:
-        submissions = FormSubmission.query.order_by(FormSubmission.submitted_at.desc()).all()
+        submissions = FormSubmission.query.order_by(FormSubmission.created_at.desc()).all()
         
         submissions_data = []
         for submission in submissions:
-            submissions_data.append({
+            submission_dict = {
                 'id': submission.id,
                 'form_type': submission.form_type,
                 'name': submission.name,
                 'email': submission.email,
-                'company': submission.company,
-                'interest': submission.interest,
-                'message': submission.message,
                 'phone': submission.phone,
-                'submitted_at': submission.submitted_at.isoformat(),
-                'submission_data': json.loads(submission.submission_data) if submission.submission_data else {}
-            })
+                'company': submission.company,
+                'message': submission.message,
+                'created_at': submission.created_at.isoformat() if submission.created_at else None
+            }
+            
+            # Parse additional_data if it exists
+            if submission.additional_data:
+                try:
+                    additional_data = json.loads(submission.additional_data)
+                    submission_dict.update(additional_data)
+                except json.JSONDecodeError:
+                    pass
+            
+            submissions_data.append(submission_dict)
         
         return jsonify({
             'success': True,
@@ -291,36 +339,45 @@ def get_submissions():
         }), 200
         
     except Exception as e:
+        print(f"Error in get_submissions: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error retrieving submissions: {str(e)}'
+            'message': 'An error occurred while retrieving submissions'
         }), 500
 
 @forms_bp.route('/submissions/<int:submission_id>', methods=['GET'])
 def get_submission(submission_id):
-    """Get a specific form submission"""
     try:
         submission = FormSubmission.query.get_or_404(submission_id)
         
+        submission_dict = {
+            'id': submission.id,
+            'form_type': submission.form_type,
+            'name': submission.name,
+            'email': submission.email,
+            'phone': submission.phone,
+            'company': submission.company,
+            'message': submission.message,
+            'created_at': submission.created_at.isoformat() if submission.created_at else None
+        }
+        
+        # Parse additional_data if it exists
+        if submission.additional_data:
+            try:
+                additional_data = json.loads(submission.additional_data)
+                submission_dict.update(additional_data)
+            except json.JSONDecodeError:
+                pass
+        
         return jsonify({
             'success': True,
-            'submission': {
-                'id': submission.id,
-                'form_type': submission.form_type,
-                'name': submission.name,
-                'email': submission.email,
-                'company': submission.company,
-                'interest': submission.interest,
-                'message': submission.message,
-                'phone': submission.phone,
-                'submitted_at': submission.submitted_at.isoformat(),
-                'submission_data': json.loads(submission.submission_data) if submission.submission_data else {}
-            }
+            'submission': submission_dict
         }), 200
         
     except Exception as e:
+        print(f"Error in get_submission: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f'Error retrieving submission: {str(e)}'
+            'message': 'An error occurred while retrieving the submission'
         }), 500
 
