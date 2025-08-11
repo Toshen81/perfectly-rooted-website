@@ -1,18 +1,13 @@
 from flask import Blueprint, request, jsonify
-import json
-import os
-from datetime import datetime
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 forms_bp = Blueprint('forms', __name__)
 
 @forms_bp.route('/submit-consultation', methods=['POST'])
 def submit_consultation():
+    print("CONSULTATION FUNCTION CALLED")
     try:
         data = request.get_json()
-        print(f"Consultation submission received: {data}")
+        print(f"Consultation data: {data}")
         
         return jsonify({
             'success': True,
@@ -28,9 +23,10 @@ def submit_consultation():
 
 @forms_bp.route('/submit-package', methods=['POST'])
 def submit_package():
+    print("PACKAGE FUNCTION CALLED")
     try:
         data = request.get_json()
-        print(f"Package submission received: {data}")
+        print(f"Package data: {data}")
         
         return jsonify({
             'success': True,
@@ -46,79 +42,67 @@ def submit_package():
 
 @forms_bp.route('/submit-ebook', methods=['POST'])
 def submit_ebook():
-    print("=== EBOOK FUNCTION STARTED ===")
+    print("EBOOK FUNCTION CALLED - FIRST LINE")
     
     try:
-        data = request.get_json()
-        print(f"Ebook submission received: {data}")
+        print("EBOOK FUNCTION - INSIDE TRY BLOCK")
         
-        # SEND EMAIL IMMEDIATELY - FIRST THING WE DO
-        print("=== STARTING EMAIL PROCESS ===")
+        data = request.get_json()
+        print(f"EBOOK DATA RECEIVED: {data}")
         
         user_email = data.get('email')
-        user_name = data.get('name', 'Friend')
+        print(f"USER EMAIL: {user_email}")
         
-        print(f"User email: {user_email}")
-        print(f"User name: {user_name}")
-        
-        # Email configuration
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
-        sender_password = os.getenv('EMAIL_PASSWORD')
-        
-        print(f"Sender email: {sender_email}")
-        print(f"Password available: {bool(sender_password)}")
-        
-        if not sender_password:
-            print("ERROR: EMAIL_PASSWORD environment variable not set")
-        else:
-            print("Password is available, proceeding with email...")
+        # Test if we can import email modules
+        try:
+            print("TESTING EMAIL IMPORTS...")
+            import smtplib
+            import os
+            from email.mime.multipart import MIMEMultipart
+            from email.mime.text import MIMEText
+            print("EMAIL IMPORTS SUCCESSFUL")
             
-            try:
-                # Create simple email
-                subject = "📚 Your Free Business Guide: 'Rooted in Success'"
+            # Test environment variables
+            sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
+            sender_password = os.getenv('EMAIL_PASSWORD')
+            
+            print(f"SENDER EMAIL: {sender_email}")
+            print(f"PASSWORD EXISTS: {bool(sender_password)}")
+            
+            if sender_password:
+                print("ATTEMPTING TO SEND EMAIL...")
                 
-                body = f"""
-                <html>
-                <body>
-                    <h2>📚 Thank You {user_name}!</h2>
-                    <p>Thank you for downloading our free business guide!</p>
-                    <p>This email confirms that our email system is working.</p>
-                    <p>The PDF attachment will be added in the next version.</p>
-                    <p>Best regards,<br>Toshen<br>Perfectly Rooted Solutions</p>
-                </body>
-                </html>
-                """
-                
-                print("Creating email message...")
+                # Create simple message
                 msg = MIMEMultipart()
                 msg['From'] = sender_email
                 msg['To'] = user_email
-                msg['Subject'] = subject
+                msg['Subject'] = "Test Email from Perfectly Rooted"
+                
+                body = f"<html><body><h2>Test Email</h2><p>This is a test email to {user_email}</p></body></html>"
                 msg.attach(MIMEText(body, 'html'))
-                print("Email message created")
                 
-                print("Connecting to Gmail SMTP...")
-                server = smtplib.SMTP(smtp_server, smtp_port)
+                print("EMAIL MESSAGE CREATED")
+                
+                # Send email
+                server = smtplib.SMTP("smtp.gmail.com", 587)
                 server.starttls()
-                print("SMTP connection established")
+                print("SMTP CONNECTION ESTABLISHED")
                 
-                print("Logging into Gmail...")
                 server.login(sender_email, sender_password)
-                print("Gmail login successful")
+                print("GMAIL LOGIN SUCCESSFUL")
                 
-                print("Sending email...")
-                text = msg.as_string()
-                server.sendmail(sender_email, user_email, text)
+                server.sendmail(sender_email, user_email, msg.as_string())
                 server.quit()
                 
-                print(f"SUCCESS: Email sent to {user_email}")
+                print("EMAIL SENT SUCCESSFULLY!")
                 
-            except Exception as email_error:
-                print(f"EMAIL ERROR: {str(email_error)}")
+            else:
+                print("NO PASSWORD AVAILABLE")
+                
+        except Exception as email_error:
+            print(f"EMAIL ERROR: {str(email_error)}")
         
-        print("=== EMAIL PROCESS COMPLETE ===")
+        print("RETURNING SUCCESS RESPONSE")
         
         return jsonify({
             'success': True,
@@ -126,7 +110,7 @@ def submit_ebook():
         }), 200
         
     except Exception as e:
-        print(f"Error in submit_ebook: {str(e)}")
+        print(f"MAJOR ERROR in submit_ebook: {str(e)}")
         return jsonify({
             'success': False,
             'message': 'An error occurred while processing your request'
@@ -134,32 +118,18 @@ def submit_ebook():
 
 @forms_bp.route('/submissions', methods=['GET'])
 def get_submissions():
-    try:
-        return jsonify({
-            'success': True,
-            'submissions': [],
-            'total': 0
-        }), 200
-        
-    except Exception as e:
-        print(f"Error in get_submissions: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'An error occurred while retrieving submissions'
-        }), 500
+    print("SUBMISSIONS FUNCTION CALLED")
+    return jsonify({
+        'success': True,
+        'submissions': [],
+        'total': 0
+    }), 200
 
 @forms_bp.route('/submissions/<int:submission_id>', methods=['GET'])
 def get_submission(submission_id):
-    try:
-        return jsonify({
-            'success': True,
-            'submission': {}
-        }), 200
-        
-    except Exception as e:
-        print(f"Error in get_submission: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'An error occurred while retrieving the submission'
-        }), 500
+    print(f"GET SUBMISSION FUNCTION CALLED: {submission_id}")
+    return jsonify({
+        'success': True,
+        'submission': {}
+    }), 200
 
