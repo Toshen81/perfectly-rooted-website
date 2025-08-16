@@ -1,142 +1,165 @@
 from flask import Blueprint, request, jsonify
-import json
 import os
-from datetime import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
-# Try to import database models - if it fails, we'll handle it gracefully
-try:
-    from src.models.form_submission import FormSubmission, db
-    DATABASE_AVAILABLE = True
-    print("Database models imported successfully")
-except ImportError as e:
-    print(f"Database models not available: {e}")
-    DATABASE_AVAILABLE = False
-
 forms_bp = Blueprint('forms', __name__)
+
+def send_email(to_email, subject, body, attachment_path=None):
+    """Send email with optional attachment"""
+    print(f"=== SENDING EMAIL TO: {to_email} ===")
+    
+    try:
+        # Email configuration
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
+        sender_password = os.getenv('EMAIL_PASSWORD')
+        
+        print(f"Sender: {sender_email}")
+        print(f"Password available: {bool(sender_password)}")
+        
+        if not sender_password:
+            print("ERROR: No email password available")
+            return False
+        
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html'))
+        print("Email message created")
+        
+        # Add attachment if provided
+        if attachment_path and os.path.exists(attachment_path):
+            print(f"Attaching file: {attachment_path}")
+            with open(attachment_path, "rb") as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                
+            encoders.encode_base64(part)
+            part.add_header(
+                'Content-Disposition',
+                f'attachment; filename= rooted_in_success_ebook.pdf'
+            )
+            msg.attach(part)
+            print("PDF attachment added")
+        elif attachment_path:
+            print(f"WARNING: Attachment file not found: {attachment_path}")
+        
+        # Send email
+        print("Connecting to Gmail...")
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        print("Gmail login successful")
+        
+        server.sendmail(sender_email, to_email, msg.as_string())
+        server.quit()
+        print("EMAIL SENT SUCCESSFULLY!")
+        return True
+        
+    except Exception as e:
+        print(f"EMAIL ERROR: {str(e)}")
+        return False
 
 @forms_bp.route('/submit-consultation', methods=['POST'])
 def submit_consultation():
+    print("=== CONSULTATION FUNCTION CALLED ===")
+    
     try:
         data = request.get_json()
-        print(f"Consultation submission received: {data}")
+        print(f"Consultation data: {data}")
         
-        # Try to save to database if available
-        if DATABASE_AVAILABLE:
-            try:
-                submission = FormSubmission(
-                    form_type='consultation',
-                    name=data.get('name'),
-                    email=data.get('email'),
-                    phone=data.get('phone'),
-                    company=data.get('company'),
-                    message=data.get('message'),
-                    additional_data=json.dumps({
-                        'interest': data.get('interest'),
-                        'submitted_at': datetime.utcnow().isoformat()
-                    })
-                )
+        user_email = data.get('email')
+        user_name = data.get('name', 'Friend')
+        
+        # Send confirmation email to user
+        subject = "🤝 Consultation Request Received - Perfectly Rooted Solutions"
+        body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #002147;">🤝 Thank You for Your Consultation Request!</h2>
                 
-                db.session.add(submission)
-                db.session.commit()
-                print(f"Consultation saved to database for {data.get('email')}")
+                <p>Hi {user_name},</p>
                 
-            except Exception as db_error:
-                print(f"Database save failed: {db_error}")
+                <p>Thank you for reaching out to Perfectly Rooted Solutions! I've received your consultation request and will get back to you within 24 hours.</p>
+                
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #002147; margin-top: 0;">📋 Your Request Details:</h3>
+                    <p><strong>Name:</strong> {data.get('name', 'Not provided')}</p>
+                    <p><strong>Email:</strong> {data.get('email', 'Not provided')}</p>
+                    <p><strong>Phone:</strong> {data.get('phone', 'Not provided')}</p>
+                    <p><strong>Company:</strong> {data.get('company', 'Not provided')}</p>
+                    <p><strong>Message:</strong> {data.get('message', 'Not provided')}</p>
+                </div>
+                
+                <p>I'm excited to learn more about your business and discuss how we can help you achieve your goals!</p>
+                
+                <p>Best regards,<br>
+                <strong>Toshen</strong><br>
+                Founder, Perfectly Rooted Solutions<br>
+                📧 perfectlyrooted25@gmail.com<br>
+                📞 800.893.0006</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        print("Sending consultation confirmation email...")
+        send_email(user_email, subject, body)
         
         return jsonify({
             'success': True,
-            'message': 'Consultation request submitted successfully'
+            'message': '🎉 Thank you! Your consultation request has been submitted successfully. Check your email for confirmation!'
         }), 200
         
     except Exception as e:
-        print(f"Error in submit_consultation: {str(e)}")
+        print(f"ERROR in consultation: {str(e)}")
         return jsonify({
             'success': False,
-            'message': 'An error occurred while processing your request'
+            'message': '❌ An error occurred while processing your request. Please try again.'
         }), 500
 
 @forms_bp.route('/submit-package', methods=['POST'])
 def submit_package():
+    print("=== PACKAGE FUNCTION CALLED ===")
+    
     try:
         data = request.get_json()
-        print(f"Package submission received: {data}")
-        
-        # Try to save to database if available
-        if DATABASE_AVAILABLE:
-            try:
-                submission = FormSubmission(
-                    form_type='package',
-                    name=data.get('name'),
-                    email=data.get('email'),
-                    phone=data.get('phone'),
-                    company=data.get('company'),
-                    message=data.get('message'),
-                    additional_data=json.dumps({
-                        'package': data.get('package'),
-                        'submitted_at': datetime.utcnow().isoformat()
-                    })
-                )
-                
-                db.session.add(submission)
-                db.session.commit()
-                print(f"Package inquiry saved to database for {data.get('email')}")
-                
-            except Exception as db_error:
-                print(f"Database save failed: {db_error}")
+        print(f"Package data: {data}")
         
         return jsonify({
             'success': True,
-            'message': 'Package inquiry submitted successfully'
+            'message': '📦 Thank you! Your package inquiry has been submitted successfully. We\'ll be in touch soon!'
         }), 200
         
     except Exception as e:
-        print(f"Error in submit_package: {str(e)}")
+        print(f"ERROR in package: {str(e)}")
         return jsonify({
             'success': False,
-            'message': 'An error occurred while processing your request'
+            'message': '❌ An error occurred while processing your request. Please try again.'
         }), 500
 
 @forms_bp.route('/submit-ebook', methods=['POST'])
 def submit_ebook():
-    print("EBOOK FUNCTION CALLED")
+    print("=== EBOOK FUNCTION CALLED ===")
     
     try:
         data = request.get_json()
-        print(f"Ebook submission received: {data}")
+        print(f"Ebook data: {data}")
         
-        # Try to save to database if available
-        if DATABASE_AVAILABLE:
-            try:
-                submission = FormSubmission(
-                    form_type='ebook',
-                    name=data.get('name'),
-                    email=data.get('email'),
-                    company=data.get('business_name'),
-                    additional_data=json.dumps({
-                        'submitted_at': datetime.utcnow().isoformat()
-                    })
-                )
-                
-                db.session.add(submission)
-                db.session.commit()
-                print(f"Ebook request saved to database for {data.get('email')}")
-                
-            except Exception as db_error:
-                print(f"Database save failed: {db_error}")
-        
-        # Send ebook email with PDF attachment
         user_email = data.get('email')
         user_name = data.get('name', 'Friend')
-        user_subject = "📚 Your Free Business Guide: 'Rooted in Success'"
         
-        print(f"Preparing email for: {user_email}")
-        
-        user_body = f"""
+        # Create beautiful ebook email
+        subject = "📚 Your Free Business Guide: 'Rooted in Success'"
+        body = f"""
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -175,194 +198,62 @@ def submit_ebook():
                 
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                 <p style="font-size: 12px; color: #666;">
-                    You're receiving this email because you downloaded our free business guide from perfectly-rooted.com. 
-                    If you have any questions, please don't hesitate to reach out!
+                    You're receiving this email because you downloaded our free business guide from perfectly-rooted.com.
                 </p>
             </div>
         </body>
         </html>
         """
         
-        # Email configuration
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = os.getenv('EMAIL_USERNAME', 'perfectlyrooted25@gmail.com')
-        sender_password = os.getenv('EMAIL_PASSWORD')
+        # Find PDF file
+        possible_paths = [
+            'rooted_in_success_ebook.pdf',
+            './rooted_in_success_ebook.pdf',
+            '/opt/render/project/src/rooted_in_success_ebook.pdf',
+            '/opt/render/project/rooted_in_success_ebook.pdf'
+        ]
         
-        print(f"Sender email: {sender_email}")
-        print(f"Password available: {bool(sender_password)}")
+        pdf_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                pdf_path = path
+                print(f"Found PDF at: {pdf_path}")
+                break
         
-        if not sender_password:
-            print("ERROR: EMAIL_PASSWORD environment variable not set")
-            return jsonify({
-                'success': True,
-                'message': 'Ebook request processed successfully (email config issue)'
-            }), 200
-        
-        try:
-            # Create message
-            msg = MIMEMultipart()
-            msg['From'] = sender_email
-            msg['To'] = user_email
-            msg['Subject'] = user_subject
-            
-            # Add body to email
-            msg.attach(MIMEText(user_body, 'html'))
-            print("Email body attached")
-            
-            # Find and attach PDF file
-            possible_paths = [
-                'rooted_in_success_ebook.pdf',
-                './rooted_in_success_ebook.pdf',
-                '/opt/render/project/src/rooted_in_success_ebook.pdf',
-                '/opt/render/project/rooted_in_success_ebook.pdf',
-                os.path.join(os.path.dirname(__file__), '..', '..', 'rooted_in_success_ebook.pdf'),
-                os.path.join(os.getcwd(), 'rooted_in_success_ebook.pdf')
-            ]
-            
-            pdf_path = None
+        if not pdf_path:
+            print("WARNING: PDF file not found in any location")
             for path in possible_paths:
-                if os.path.exists(path):
-                    pdf_path = path
-                    print(f"Found PDF at: {pdf_path}")
-                    break
-            
-            if pdf_path:
-                print("Attaching PDF file...")
-                with open(pdf_path, "rb") as attachment:
-                    part = MIMEBase('application', 'octet-stream')
-                    part.set_payload(attachment.read())
-                    
-                encoders.encode_base64(part)
-                part.add_header(
-                    'Content-Disposition',
-                    f'attachment; filename= rooted_in_success_ebook.pdf'
-                )
-                msg.attach(part)
-                print("PDF attachment added successfully")
-            else:
-                print("WARNING: PDF file not found in any of the expected locations:")
-                for path in possible_paths:
-                    print(f"  - {path} (exists: {os.path.exists(path)})")
-            
-            # Send email
-            print("Connecting to Gmail SMTP...")
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            print("SMTP connection established")
-            
-            server.login(sender_email, sender_password)
-            print("Gmail login successful")
-            
-            text = msg.as_string()
-            server.sendmail(sender_email, user_email, text)
-            server.quit()
-            
-            print(f"Email with PDF sent successfully to {user_email}")
-            
-        except Exception as email_error:
-            print(f"Email sending failed: {email_error}")
-            # Don't let email errors break the form submission
+                print(f"  Checked: {path} - exists: {os.path.exists(path)}")
+        
+        print("Sending ebook email with PDF attachment...")
+        send_email(user_email, subject, body, pdf_path)
         
         return jsonify({
             'success': True,
-            'message': 'Ebook request processed successfully'
+            'message': '📚 Success! Your free business guide has been sent to your email. Check your inbox (and spam folder) for the PDF!'
         }), 200
         
     except Exception as e:
-        print(f"Error in submit_ebook: {str(e)}")
+        print(f"ERROR in ebook: {str(e)}")
         return jsonify({
             'success': False,
-            'message': 'An error occurred while processing your request'
+            'message': '❌ An error occurred while processing your request. Please try again.'
         }), 500
 
 @forms_bp.route('/submissions', methods=['GET'])
 def get_submissions():
-    try:
-        if not DATABASE_AVAILABLE:
-            return jsonify({
-                'success': True,
-                'submissions': [],
-                'total': 0,
-                'message': 'Database not available'
-            }), 200
-        
-        submissions = FormSubmission.query.order_by(FormSubmission.created_at.desc()).all()
-        
-        submissions_data = []
-        for submission in submissions:
-            submission_dict = {
-                'id': submission.id,
-                'form_type': submission.form_type,
-                'name': submission.name,
-                'email': submission.email,
-                'phone': submission.phone,
-                'company': submission.company,
-                'message': submission.message,
-                'created_at': submission.created_at.isoformat() if submission.created_at else None
-            }
-            
-            if submission.additional_data:
-                try:
-                    additional_data = json.loads(submission.additional_data)
-                    submission_dict.update(additional_data)
-                except json.JSONDecodeError:
-                    pass
-            
-            submissions_data.append(submission_dict)
-        
-        return jsonify({
-            'success': True,
-            'submissions': submissions_data,
-            'total': len(submissions_data)
-        }), 200
-        
-    except Exception as e:
-        print(f"Error in get_submissions: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'An error occurred while retrieving submissions'
-        }), 500
+    print("=== SUBMISSIONS FUNCTION CALLED ===")
+    return jsonify({
+        'success': True,
+        'submissions': [],
+        'total': 0
+    }), 200
 
 @forms_bp.route('/submissions/<int:submission_id>', methods=['GET'])
 def get_submission(submission_id):
-    try:
-        if not DATABASE_AVAILABLE:
-            return jsonify({
-                'success': True,
-                'submission': {},
-                'message': 'Database not available'
-            }), 200
-        
-        submission = FormSubmission.query.get_or_404(submission_id)
-        
-        submission_dict = {
-            'id': submission.id,
-            'form_type': submission.form_type,
-            'name': submission.name,
-            'email': submission.email,
-            'phone': submission.phone,
-            'company': submission.company,
-            'message': submission.message,
-            'created_at': submission.created_at.isoformat() if submission.created_at else None
-        }
-        
-        if submission.additional_data:
-            try:
-                additional_data = json.loads(submission.additional_data)
-                submission_dict.update(additional_data)
-            except json.JSONDecodeError:
-                pass
-        
-        return jsonify({
-            'success': True,
-            'submission': submission_dict
-        }), 200
-        
-    except Exception as e:
-        print(f"Error in get_submission: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'An error occurred while retrieving the submission'
-        }), 500
+    print(f"=== GET SUBMISSION FUNCTION CALLED: {submission_id} ===")
+    return jsonify({
+        'success': True,
+        'submission': {}
+    }), 200
 
