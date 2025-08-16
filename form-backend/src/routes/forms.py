@@ -51,20 +51,23 @@ def send_email(to_email, subject, body, attachment_path=None):
         elif attachment_path:
             print(f"WARNING: Attachment file not found: {attachment_path}")
         
-        # Send email
+        # Connect to Gmail and send
         print("Connecting to Gmail...")
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
+        print("Gmail login...")
         server.login(sender_email, sender_password)
         print("Gmail login successful")
         
-        server.sendmail(sender_email, to_email, msg.as_string())
+        print("Sending email...")
+        text = msg.as_string()
+        server.sendmail(sender_email, to_email, text)
         server.quit()
         print("EMAIL SENT SUCCESSFULLY!")
         return True
         
     except Exception as e:
-        print(f"EMAIL ERROR: {str(e)}")
+        print(f"ERROR sending email: {str(e)}")
         return False
 
 @forms_bp.route('/submit-consultation', methods=['POST'])
@@ -112,7 +115,12 @@ def submit_consultation():
         """
         
         print("Sending consultation confirmation email...")
-        send_email(user_email, subject, body)
+        email_sent = send_email(user_email, subject, body)
+        
+        if email_sent:
+            print("Consultation email sent successfully")
+        else:
+            print("Failed to send consultation email")
         
         return jsonify({
             'success': True,
@@ -156,6 +164,8 @@ def submit_ebook():
         
         user_email = data.get('email')
         user_name = data.get('name', 'Friend')
+        
+        print(f"Processing ebook request for: {user_name} ({user_email})")
         
         # Create beautiful ebook email
         subject = "📚 Your Free Business Guide: 'Rooted in Success'"
@@ -205,28 +215,43 @@ def submit_ebook():
         </html>
         """
         
-        # Find PDF file
+        # Find PDF file - check multiple possible locations
         possible_paths = [
             'rooted_in_success_ebook.pdf',
             './rooted_in_success_ebook.pdf',
             '/opt/render/project/src/rooted_in_success_ebook.pdf',
-            '/opt/render/project/rooted_in_success_ebook.pdf'
+            '/opt/render/project/rooted_in_success_ebook.pdf',
+            '/opt/render/project/src/form-backend/rooted_in_success_ebook.pdf',
+            '/opt/render/project/form-backend/rooted_in_success_ebook.pdf'
         ]
         
         pdf_path = None
+        print("Searching for PDF file...")
         for path in possible_paths:
+            print(f"Checking: {path}")
             if os.path.exists(path):
                 pdf_path = path
-                print(f"Found PDF at: {pdf_path}")
+                print(f"✅ Found PDF at: {pdf_path}")
                 break
+            else:
+                print(f"❌ Not found: {path}")
         
         if not pdf_path:
-            print("WARNING: PDF file not found in any location")
-            for path in possible_paths:
-                print(f"  Checked: {path} - exists: {os.path.exists(path)}")
+            print("⚠️ WARNING: PDF file not found in any location")
+            print("Available files in current directory:")
+            try:
+                for file in os.listdir('.'):
+                    print(f"  - {file}")
+            except:
+                print("  Could not list directory contents")
         
         print("Sending ebook email with PDF attachment...")
-        send_email(user_email, subject, body, pdf_path)
+        email_sent = send_email(user_email, subject, body, pdf_path)
+        
+        if email_sent:
+            print("✅ Ebook email sent successfully!")
+        else:
+            print("❌ Failed to send ebook email")
         
         return jsonify({
             'success': True,
@@ -234,7 +259,9 @@ def submit_ebook():
         }), 200
         
     except Exception as e:
-        print(f"ERROR in ebook: {str(e)}")
+        print(f"ERROR in ebook function: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'message': '❌ An error occurred while processing your request. Please try again.'
