@@ -158,6 +158,10 @@
 
     .package-button {
       width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       background: var(--gradient-primary);
       color: var(--white);
       padding: 1rem 2rem;
@@ -167,14 +171,31 @@
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
       text-decoration: none;
-      display: inline-block;
       text-align: center;
     }
 
+    .package-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .package-button:hover::before {
+      left: 100%;
+    }
+
     .package-button:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl);
     }
 
     .comparison-section {
@@ -216,6 +237,45 @@
 
     .faq-item.active .faq-answer {
       display: block;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gradient-primary);
+      color: var(--white);
+      padding: 1rem 2rem;
+      text-decoration: none;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl);
     }
 
     @media (max-width: 768px) {
@@ -312,7 +372,7 @@
           <div class="package-header">
             <span class="package-icon">👥</span>
             <h3 class="package-title">VA Onboarding Package</h3>
-            <div class="package-price">$1,500</div>
+            <div class="package-price">$797</div>
             <div class="package-duration">One-time service</div>
             <p class="package-description">Complete virtual assistant sourcing and onboarding solution to help you find, hire, and integrate the perfect VA for your business needs.</p>
           </div>
