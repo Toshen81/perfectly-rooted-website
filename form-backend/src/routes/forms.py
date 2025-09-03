@@ -245,6 +245,7 @@ def submit_ebook():
         
         # Find PDF file
         possible_paths = [
+            '../../../rooted_in_success_ebook.pdf',
             'rooted_in_success_ebook.pdf',
             './rooted_in_success_ebook.pdf',
             '/opt/render/project/src/rooted_in_success_ebook.pdf',
